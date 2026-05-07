@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<html>
+<head>
+	<title>Index</title>
+	<meta name="generator" content="BBEdit 15.5">
+</head>
+<body>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,116 +14,80 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>PD Supply Track</title>
 <style>
-  :root {
-    --blue: #007aff;
-    --green: #34c759;
-    --red: #ff3b30;
-    --orange: #ff9500;
-    --purple: #af52de;
-    --gray: #8e8e93;
-    --bg: #f2f2f7;
-    --card: #ffffff;
-    --border: #e5e5ea;
-    --text: #1c1c1e;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); }
-
-  /* HEADER */
-  header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px; position: sticky; top: 0; z-index: 100; }
-  header h1 { font-size: 20px; font-weight: 700; }
-  header p { font-size: 13px; color: var(--gray); margin-top: 2px; }
-
-  /* STATS */
-  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; padding: 12px 16px; }
-  .stat { background: var(--card); border-radius: 12px; padding: 10px 6px; text-align: center; }
-  .stat-val { font-size: 24px; font-weight: 700; color: var(--blue); }
-  .stat-lbl { font-size: 10px; color: var(--gray); margin-top: 2px; }
-
-  /* TABS */
-  .tabs { display: flex; overflow-x: auto; background: var(--card); border-bottom: 1px solid var(--border); scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tabs button { flex-shrink: 0; padding: 12px 16px; border: none; background: none; font-size: 14px; color: var(--gray); cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; }
-  .tabs button.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
-
-  /* PANELS */
-  .panel { padding: 16px; display: none; }
-  .panel.active { display: block; }
-
-  /* TOOLBAR */
-  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
-  .search { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 16px; background: var(--card); color: var(--text); }
-  .search:focus { outline: 2px solid var(--blue); border-color: transparent; }
-
-  /* BUTTONS */
-  .btn { padding: 10px 16px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; background: var(--blue); color: #fff; }
-  .btn-secondary { background: var(--border); color: var(--text); }
-  .btn-green { background: var(--green); }
-  .btn-red { background: var(--red); }
-  .btn-purple { background: var(--purple); }
-  .btn-full { width: 100%; padding: 14px; font-size: 16px; border-radius: 14px; margin-top: 8px; }
-
-  /* FILTERS */
-  .filters { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 16px; scrollbar-width: none; padding-bottom: 2px; }
-  .filters::-webkit-scrollbar { display: none; }
-  .filter-btn { flex-shrink: 0; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; background: var(--card); color: var(--gray); cursor: pointer; }
-  .filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-
-  /* ITEM CARDS */
-  .item-list { display: flex; flex-direction: column; gap: 10px; }
-  .item-card { background: var(--card); border-radius: 14px; padding: 14px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
-  .item-card.active { border-color: var(--blue); }
-  .item-card.warn { border-left: 4px solid var(--orange); }
-  .item-card.crit { border-left: 4px solid var(--red); }
-  .item-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .item-name { font-size: 16px; font-weight: 600; flex: 1; }
-  .item-meta { font-size: 13px; color: var(--gray); margin-top: 4px; }
-  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-  .chip { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-  .chip-blue { background: #dbeafe; color: #1d4ed8; }
-  .chip-purple { background: #ede9fe; color: #6d28d9; }
-  .chip-red { background: #ffd6d6; color: #c00; }
-  .chip-green { background: #d1f0da; color: #1a7f37; }
-  .chip-orange { background: #fff3cd; color: #856404; }
-
-  /* EMPTY STATE */
-  .empty { text-align: center; padding: 48px 24px; color: var(--gray); }
-  .empty-icon { font-size: 48px; margin-bottom: 12px; }
-  .empty h3 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .empty p { font-size: 14px; line-height: 1.5; }
-
-  /* EDITOR SHEET */
-  .editor-sheet { background: var(--card); border-radius: 16px; padding: 16px; margin-top: 12px; display: none; }
-  .editor-sheet.open { display: block; }
-  .editor-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
-  .field-group { display: flex; flex-direction: column; gap: 12px; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .field { display: flex; flex-direction: column; gap: 4px; }
-  .field label { font-size: 12px; color: var(--gray); font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
-  .field input, .field select, .field textarea {
-    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
-    font-size: 16px; background: var(--bg); color: var(--text); width: 100%;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--blue); border-color: transparent; }
-  .field textarea { resize: vertical; min-height: 70px; }
-  .field-full { grid-column: 1 / -1; }
-  .section-label { font-size: 13px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin: 4px 0 2px; }
-  .divider { height: 1px; background: var(--border); margin: 8px 0; }
-  .editor-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-
-  /* INFO BOX */
-  .info-box { background: #dbeafe; border-radius: 12px; padding: 12px 14px; font-size: 14px; color: #1d4ed8; margin-bottom: 14px; line-height: 1.5; }
-
-  /* HANDOFF / CLINIC CARDS */
-  .order-card { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-  .order-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .order-card h4 { font-size: 16px; font-weight: 600; flex: 1; }
-  .order-meta { font-size: 13px; color: var(--gray); margin-top: 4px; }
-
-  /* HISTORY */
-  .history-card { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-  .history-top { display: flex; justify-content: space-between; align-items: center; }
-  .history-date { font-size: 12px; color: var(--gray); }
+:root {
+  --blue:#007aff; --green:#34c759; --red:#ff3b30;
+  --orange:#ff9500; --purple:#af52de; --gray:#8e8e93;
+  --bg:#f2f2f7; --card:#ffffff; --border:#e5e5ea; --text:#1c1c1e;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--card);border-bottom:1px solid var(--border);padding:16px;position:sticky;top:0;z-index:100}
+header h1{font-size:22px;font-weight:700}
+header p{font-size:13px;color:var(--gray);margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px}
+.stat{background:var(--card);border-radius:12px;padding:10px 6px;text-align:center}
+.stat-val{font-size:24px;font-weight:700;color:var(--blue)}
+.stat-lbl{font-size:10px;color:var(--gray);margin-top:2px}
+.tabs{display:flex;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex-shrink:0;padding:12px 16px;border:none;background:none;font-size:14px;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;font-weight:500}
+.tabs button.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.panel{padding:16px;display:none}
+.panel.active{display:block}
+.toolbar{display:flex;gap:8px;margin-bottom:12px}
+.search{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:12px;font-size:16px;background:var(--card);color:var(--text)}
+.search:focus{outline:2px solid var(--blue);border-color:transparent}
+.btn{padding:10px 16px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;background:var(--blue);color:#fff}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-full{width:100%;padding:14px;font-size:16px;border-radius:14px;margin-top:8px}
+.filters{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;scrollbar-width:none;padding-bottom:2px}
+.filters::-webkit-scrollbar{display:none}
+.filter-btn{flex-shrink:0;padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:13px;background:var(--card);color:var(--gray);cursor:pointer}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.item-list{display:flex;flex-direction:column;gap:10px}
+.item-card{background:var(--card);border-radius:14px;padding:14px;cursor:pointer;border:2px solid transparent}
+.item-card.selected{border-color:var(--blue)}
+.item-card.warn{border-left:4px solid var(--orange)}
+.item-card.crit{border-left:4px solid var(--red)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.item-name{font-size:16px;font-weight:600;flex:1}
+.item-meta{font-size:13px;color:var(--gray);margin-top:4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.chip-blue{background:#dbeafe;color:#1d4ed8}
+.chip-purple{background:#ede9fe;color:#6d28d9}
+.chip-red{background:#ffd6d6;color:#c00}
+.chip-green{background:#d1f0da;color:#1a7f37}
+.chip-orange{background:#fff3cd;color:#856404}
+.empty{text-align:center;padding:48px 24px;color:var(--gray)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty h3{font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px}
+.empty p{font-size:14px;line-height:1.5}
+.editor-sheet{background:var(--card);border-radius:16px;padding:16px;margin-top:12px;display:none}
+.editor-sheet.open{display:block}
+.editor-title{font-size:17px;font-weight:700;margin-bottom:16px}
+.field-group{display:flex;flex-direction:column;gap:12px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:var(--gray);font-weight:500;text-transform:uppercase;letter-spacing:0.3px}
+.field input,.field select,.field textarea{padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:16px;background:var(--bg);color:var(--text);width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--blue);border-color:transparent}
+.field textarea{resize:vertical;min-height:70px}
+.field-full{grid-column:1/-1}
+.section-label{font-size:13px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px}
+.divider{height:1px;background:var(--border);margin:4px 0}
+.editor-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.info-box{background:#dbeafe;border-radius:12px;padding:12px 14px;font-size:14px;color:#1d4ed8;margin-bottom:14px;line-height:1.5}
+.order-card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px}
+.order-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.order-card h4{font-size:16px;font-weight:600;flex:1}
+.order-meta{font-size:13px;color:var(--gray);margin-top:4px}
+.history-card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px}
+.history-top{display:flex;justify-content:space-between;align-items:center}
+.history-date{font-size:12px;color:var(--gray);margin-top:4px}
 </style>
 </head>
 <body>
@@ -140,10 +111,9 @@
   <button data-tab="history">History</button>
 </div>
 
-<!-- INVENTORY -->
 <div class="panel active" id="tab-inventory">
   <div class="toolbar">
-    <input class="search" id="search" type="search" placeholder="Search…">
+    <input class="search" id="search" type="search" placeholder="Search supplies…">
     <button class="btn" id="btnNew">+ New</button>
   </div>
   <div class="filters">
@@ -213,7 +183,6 @@
   </div>
 </div>
 
-<!-- MYBAXTER -->
 <div class="panel" id="tab-baxter">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
     <div><p style="font-size:12px;color:var(--gray)">Home delivery</p><h2 style="font-size:20px;font-weight:700">MyBaxter order</h2></div>
@@ -228,7 +197,6 @@
   <button class="btn btn-green btn-full" id="btnMarkSubmitted">✓ Mark submitted to MyBaxter</button>
 </div>
 
-<!-- CLINIC -->
 <div class="panel" id="tab-clinic">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
     <div><p style="font-size:12px;color:var(--gray)">From clinic</p><h2 style="font-size:20px;font-weight:700">Clinic pickup</h2></div>
@@ -237,107 +205,115 @@
       <button class="btn btn-purple" id="btnMarkAllPickup">All picked up</button>
     </div>
   </div>
-  <div class="info-box">Items planned for clinic pickup. Share the list with your PD nurse and mark each item when received.</div>
+  <div class="info-box">Items planned for clinic pickup. Share with your PD nurse and mark each item when received.</div>
   <div id="clinicList"></div>
 </div>
 
-<!-- HISTORY -->
 <div class="panel" id="tab-history">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <h2 style="font-size:20px;font-weight:700">Order history</h2>
     <button class="btn btn-red" id="btnClearHistory">Clear</button>
   </div>
   <div id="historyList"></div>
-</div>
+</div><script>
+const KEY='pd-v4';
+const g=id=>document.getElementById(id);
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>Number(v)||0;
 
-<script>
-const KEY = 'pd-v4';
-const get = id => document.getElementById(id);
-const esc = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num = v => Number(v) || 0;
+let state=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||null;}catch(e){return null;}})()
+  ||{tab:'inventory',filter:'all',selectedId:null,items:[],history:[]};
+if(!state.filter)state.filter='all';
+if(!state.history)state.history=[];
 
-let state = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { return null; } })()
-  || { tab: 'inventory', filter: 'all', selectedId: null, items: [], history: [] };
-
-const save = () => localStorage.setItem(KEY, JSON.stringify(state));
-const uid = () => 'PD-' + Math.random().toString(36).substr(2,6).toUpperCase();
-
-const reorderQty = i => Math.max(0, num(i.biweeklyNeed) - num(i.onHand) - num(i.orderedQty));
-const needsReorder = i => reorderQty(i) > 0 || num(i.onHand) <= num(i.reorderPoint);
-const daysLeft = i => {
-  if (!i.expiry) return null;
-  return Math.ceil((new Date(i.expiry) - new Date()) / 86400000);
+const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
+const uid=()=>'PD-'+Math.random().toString(36).substr(2,6).toUpperCase();
+const reorderQty=i=>Math.max(0,num(i.biweeklyNeed)-num(i.onHand)-num(i.orderedQty));
+const needsReorder=i=>reorderQty(i)>0||num(i.onHand)<=num(i.reorderPoint);
+const daysLeft=i=>{
+  if(!i.expiry)return null;
+  return Math.ceil((new Date(i.expiry)-new Date())/86400000);
 };
 
-function badge(item) {
-  const oh = num(item.onHand), rp = num(item.reorderPoint), em = num(item.emergencyMin), rq = reorderQty(item);
-  const d = daysLeft(item);
-  if (oh <= 0) return ['Out of stock', 'chip-red'];
-  if (em > 0 && oh < em) return ['Below emergency min', 'chip-red'];
-  if (oh <= rp) return ['Reorder now', 'chip-red'];
-  if (rq > 0) return ['Order needed', 'chip-orange'];
-  if (d !== null && d <= 30) return [`Exp in ${d}d`, 'chip-orange'];
-  return ['Stocked', 'chip-green'];
+function badge(item){
+  const oh=num(item.onHand),rp=num(item.reorderPoint),em=num(item.emergencyMin),rq=reorderQty(item);
+  const d=daysLeft(item);
+  if(oh<=0)return['Out of stock','chip-red'];
+  if(em>0&&oh<em)return['Below emergency min','chip-red'];
+  if(oh<=rp)return['Reorder now','chip-red'];
+  if(rq>0)return['Order needed','chip-orange'];
+  if(d!==null&&d<=30)return[`Exp in ${d}d`,'chip-orange'];
+  return['Stocked','chip-green'];
 }
 
-function planned() {
-  return state.items.filter(needsReorder).map(item => {
-    const total = reorderQty(item);
-    let ph = num(item.homeQty), pc = num(item.clinicQty);
-    if (!ph && !pc) ph = total;
-    ph = Math.min(ph, total); pc = Math.min(pc, total);
-    return { ...item, total, planHome: ph, planClinic: pc };
-  }).filter(i => i.total > 0 || num(i.onHand) <= num(i.reorderPoint));
+function planned(){
+  return state.items.filter(needsReorder).map(item=>{
+    const total=reorderQty(item);
+    let ph=num(item.homeQty),pc=num(item.clinicQty);
+    if(!ph&&!pc)ph=total;
+    ph=Math.min(ph,total);pc=Math.min(pc,total);
+    return{...item,total,planHome:ph,planClinic:pc};
+  }).filter(i=>i.total>0||num(i.onHand)<=num(i.reorderPoint));
 }
 
-function render() {
-  renderStats();
-  renderTabs();
-  renderList();
-  renderBaxter();
-  renderClinic();
-  renderHistory();
+function render(){
+  renderStats();renderTabs();renderList();renderBaxter();renderClinic();renderHistory();
 }
 
-function renderStats() {
-  get('cntItems').textContent = state.items.length;
-  get('cntReorder').textContent = state.items.filter(needsReorder).length;
-  get('cntClinic').textContent = state.items.filter(i => num(i.clinicQty) > 0).length;
-  get('cntHistory').textContent = state.history.length;
+function renderStats(){
+  g('cntItems').textContent=state.items.length;
+  g('cntReorder').textContent=state.items.filter(needsReorder).length;
+  g('cntClinic').textContent=state.items.filter(i=>num(i.clinicQty)>0).length;
+  g('cntHistory').textContent=state.history.length;
 }
 
-function renderTabs() {
-  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + state.tab));
+function renderTabs(){
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+state.tab));
 }
 
-function renderList() {
-  const q = (get('search').value || '').toLowerCase();
-  const f = state.filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
-
-  let items = state.items.filter(item => {
-    const cat = (item.category || '').toLowerCase();
-    if (q && !(item.name||'').toLowerCase().includes(q) && !cat.includes(q)) return false;
-    if (f === 'reorder') return needsReorder(item);
-    if (f === 'pd') return cat.includes('pd');
-    if (f === 'support') return cat.includes('support');
-    if (f === 'emergency') return cat.includes('emergency') || num(item.emergencyMin) > 0;
-    if (f === 'clinic') return num(item.clinicQty) > 0;
+function renderList(){
+  const q=(g('search').value||'').toLowerCase();
+  const f=state.filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===f));
+  let items=state.items.filter(item=>{
+    const cat=(item.category||'').toLowerCase();
+    if(q&&!(item.name||'').toLowerCase().includes(q)&&!cat.includes(q))return false;
+    if(f==='reorder')return needsReorder(item);
+    if(f==='pd')return cat.includes('pd');
+    if(f==='support')return cat.includes('support');
+    if(f==='emergency')return cat.includes('emergency')||num(item.emergencyMin)>0;
+    if(f==='clinic')return num(item.clinicQty)>0;
     return true;
   });
-
-  if (!items.length) {
-    get('itemList').innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">📦</div>
-        <h3>${f === 'all' ? 'No supplies yet' : 'Nothing here'}</h3>
-        <p>${f === 'all' ? 'Tap + New to add your first supply item.' : 'Try a different filter.'}</p>
-      </div>`;
-    get('editorSheet').classList.remove('open');
+  if(!items.length){
+    g('itemList').innerHTML=`<div class="empty"><div class="empty-icon">📦</div><h3>${f==='all'?'No supplies yet':'Nothing here'}</h3><p>${f==='all'?'Tap + New to add your first supply.':'Try a different filter.'}</p></div>`;
+    g('editorSheet').classList.remove('open');
     return;
   }
+  g('itemList').innerHTML=items.map(item=>{
+    const[label,cls]=badge(item);
+    const oh=num(item.onHand),em=num(item.emergencyMin),rp=num(item.reorderPoint),rq=reorderQty(item);
+    const cardClass=(em>0&&oh<em)?'crit':(rq>0||oh<=rp)?'warn':'';
+    const d=daysLeft(item);
+    const expChip=d!==null&&d<=30?`<span class="chip chip-red">Exp ${d}d</span>`:'';
+    const hChip=num(item.homeQty)>0?`<span class="chip chip-blue">Home: ${item.homeQty} ${esc(item.unit)}</span>`:'';
+    const cChip=num(item.clinicQty)>0?`<span class="chip chip-purple">Clinic: ${item.clinicQty} ${esc(item.unit)}</span>`:'';
+    return`<div class="item-card ${cardClass}${item.id===state.selectedId?' selected':''}" data-id="${item.id}">
+      <div class="card-top"><span class="item-name">${esc(item.name)}</span><span class="chip ${cls}">${label}</span></div>
+      <div class="item-meta">${esc(item.category)} · On hand: ${oh} ${esc(item.unit)} · Need: ${num(item.biweeklyNeed)}</div>
+      <div class="chips">${hChip}${cChip}${expChip}</div>
+    </div>`;
+  }).join('');
+  renderEditor();
+}
 
-  get('itemList').innerHTML = items.map(item => {
-    const [label, cls] = badge(item);
-    const oh = num(item.onHand
+function renderEditor(){
+  const item=state.items.find(i=>i.id===state.selectedId);
+  const sheet=g('editorSheet');
+  if(!item){sheet.classList.remove('open');return;}
+  sheet.classList.add('open');
+  g('editorTitle').textContent=item.name||'Edit supply';
+  g('fName').value=item.
+</body>
+</html>
