@@ -3,581 +3,136 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PD Supply Track V4</title>
+  <meta name="theme-color" content="#0d7c86" />
+  <title>PD Supply Tracker </title>
   <style>
-    :root{
-      --bg:#f7f6f2; --card:#ffffff; --line:#d9d5cd; --text:#222; --muted:#666; --accent:#01696f;
-      --warn:#964219; --ok:#2f6f2f; --danger:#a12c7b;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-    .app{max-width:1100px;margin:0 auto;padding:16px 16px 96px}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-    .hero{margin-bottom:16px}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-    .num{font-size:28px;font-weight:700}
-    .tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}
-    button,input,select,textarea{font:inherit}
-    button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px}
-    .primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .tab.active{background:#dbe9e6;border-color:#dbe9e6;color:var(--accent);font-weight:700}
-    .grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:16px}
-    .list{display:grid;gap:12px}
-    .item{display:grid;gap:6px;text-align:left}
-    .item.active{outline:3px solid #dbe9e6}
-    .muted{color:var(--muted);font-size:13px}
-    .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .field,.field-full{display:grid;gap:6px}
-    .field-full{grid-column:1/-1}
-    input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
-    textarea{min-height:90px;resize:vertical}
-    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#dbe9e6;color:var(--accent);font-size:12px;font-weight:700}
-    .warn{background:#f6e3da;color:var(--warn)}
-    .ok{background:#e2f1e2;color:var(--ok)}
-    .danger{background:#f4ddee;color:var(--danger)}
-    .hidden{display:none}
-    .empty{padding:24px;text-align:center;color:var(--muted)}
-    .bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(247,246,242,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px}
-    .bottom .actions{max-width:1100px;margin:0 auto}
-    @media (max-width:900px){
-      .stats,.grid,.fields{grid-template-columns:1fr}
-    }
+    :root{--bg:#f5f4f0;--card:#ffffff;--line:#d8d4cc;--text:#222;--muted:#666;--teal:#0d7c86;--teal-2:#d7ecee;--pink:#f3d7ea;--pink-t:#a13d7d}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px 16px 90px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+    .hero,.stats,.grid,.actions,.tabs{display:grid;gap:12px}.stats{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:.9fr 1.1fr}.tabs{grid-auto-flow:column;justify-content:start;overflow:auto}.tabs button,.actions button{white-space:nowrap}
+    button,input,select,textarea{font:inherit} button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px} .primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff} textarea{min-height:90px;resize:vertical}
+    .muted{color:var(--muted);font-size:13px}.num{font-size:28px;font-weight:700}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;background:var(--teal-2);color:var(--teal)}.warn{background:var(--pink);color:var(--pink-t)}.active{background:var(--teal-2);color:var(--teal);font-weight:700}
+    .list{display:grid;gap:10px}.item{display:grid;gap:6px;text-align:left}.item.selected{outline:3px solid var(--teal-2)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.hidden{display:none}.empty{padding:24px;text-align:center;color:var(--muted)}
+    .bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(245,244,240,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px}.bottom .actions{max-width:1100px;margin:0 auto;grid-auto-flow:column;justify-content:start;overflow:auto}
+    @media (max-width:900px){.stats,.grid,.fields{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="top">
-      <div>
-        <h1 style="margin:0;">PD Supply Track V4</h1>
-        <div class="muted">Bi-weekly planner · MyBaxter · Clinic pickup</div>
-      </div>
+  <div class="wrap">
+    <div class="row" style="margin-bottom:14px;">
+      <div><h1 style="margin:0">PD Supply Track V4</h1><div class="muted">Bi-weekly planner · MyBaxter · Clinic pickup</div></div>
       <button id="themeBtn">Theme</button>
     </div>
 
-    <div class="card hero">
-      <div class="badge">Clean copy</div>
-      <h2>Track supplies, home delivery, and clinic pickup.</h2>
-      <p class="muted">Starts empty and saves in this browser.</p>
+    <div class="card hero" style="margin-bottom:14px;">
+      <div class="badge">Fixed build</div>
+      <h2 style="margin:.25rem 0;">Track supplies, home delivery, and clinic pickup.</h2>
+      <div class="muted">Starts empty, auto-saves while you type, and stores data in this browser.</div>
     </div>
 
-    <div class="stats">
-      <div class="card"><div class="muted">Items</div><div class="num" id="countItems">0</div></div>
-      <div class="card"><div class="muted">Reorder</div><div class="num" id="countReorder">0</div></div>
-      <div class="card"><div class="muted">Clinic</div><div class="num" id="countClinic">0</div></div>
-      <div class="card"><div class="muted">History</div><div class="num" id="countHistory">0</div></div>
+    <div class="stats" style="margin-bottom:14px;">
+      <div class="card"><div class="muted">Items</div><div id="countItems" class="num">0</div></div>
+      <div class="card"><div class="muted">Reorder</div><div id="countReorder" class="num">0</div></div>
+      <div class="card"><div class="muted">Clinic</div><div id="countClinic" class="num">0</div></div>
+      <div class="card"><div class="muted">History</div><div id="countHistory" class="num">0</div></div>
     </div>
 
-    <div class="tabs" id="tabs" style="margin-bottom:16px;">
-      <button class="tab active" data-tab="inventory">Inventory</button>
-      <button class="tab" data-tab="handoff">MyBaxter</button>
-      <button class="tab" data-tab="clinic">Clinic pickup</button>
-      <button class="tab" data-tab="history">Order history</button>
+    <div class="tabs" style="margin-bottom:14px;" id="tabs">
+      <button class="active" data-tab="inventory">Inventory</button>
+      <button data-tab="handoff">MyBaxter</button>
+      <button data-tab="clinic">Clinic pickup</button>
+      <button data-tab="history">Order history</button>
     </div>
 
     <section id="inventoryView" class="grid">
-      <div class="card list">
-        <input id="search" type="search" placeholder="Search supplies">
-        <div id="itemList"></div>
-      </div>
-
       <div class="card">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
-          <div>
-            <div class="muted">Edit supply</div>
-            <h3 id="editorTitle" style="margin:0;">Supply item</h3>
-          </div>
-          <span class="badge" id="statusBadge">Stable</span>
-        </div>
-
+        <input id="search" type="search" placeholder="Search supplies" />
+        <div id="itemList" class="list" style="margin-top:12px;"></div>
+      </div>
+      <div class="card">
+        <div class="row" style="margin-bottom:12px;"><div><div class="muted">Edit supply</div><h3 id="editorTitle" style="margin:0;">Supply item</h3></div><span id="statusBadge" class="badge">Stable</span></div>
         <div class="fields">
-          <div class="field"><label>Supply name</label><input id="name" type="text"></div>
-          <div class="field"><label>Category</label><select id="category"><option>PD supplies</option><option>Support supplies</option><option>Emergency</option></select></div>
-          <div class="field"><label>Unit</label><input id="unit" type="text" placeholder="bags, boxes, rolls"></div>
-          <div class="field"><label>On hand</label><input id="onHand" type="number" min="0" step="1"></div>
-          <div class="field"><label>Bi-weekly need</label><input id="biweeklyNeed" type="number" min="0" step="1"></div>
-          <div class="field"><label>Reorder at</label><input id="reorderPoint" type="number" min="0" step="1"></div>
-          <div class="field"><label>Already ordered</label><input id="orderedQty" type="number" min="0" step="1"></div>
-          <div class="field"><label>Portal status</label><select id="deliveryStatus"><option value="not ordered">Not ordered</option><option value="submitted in MyBaxter">Submitted in MyBaxter</option><option value="partial">Partial</option><option value="delivered">Delivered</option></select></div>
-          <div class="field"><label>Planned home delivery</label><input id="homeQty" type="number" min="0" step="1"></div>
-          <div class="field"><label>Planned clinic pickup</label><input id="clinicQty" type="number" min="0" step="1"></div>
-          <div class="field-full"><label>Notes</label><textarea id="notes"></textarea></div>
+          <div><label>Supply name</label><input id="name" type="text"></div>
+          <div><label>Category</label><select id="category"><option>PD supplies</option><option>Support supplies</option><option>Emergency</option></select></div>
+          <div><label>Unit</label><input id="unit" type="text"></div>
+          <div><label>On hand</label><input id="onHand" type="number" min="0" step="1"></div>
+          <div><label>Bi-weekly need</label><input id="biweeklyNeed" type="number" min="0" step="1"></div>
+          <div><label>Reorder at</label><input id="reorderPoint" type="number" min="0" step="1"></div>
+          <div><label>Already ordered</label><input id="orderedQty" type="number" min="0" step="1"></div>
+          <div><label>Portal status</label><select id="deliveryStatus"><option value="not ordered">Not ordered</option><option value="submitted in MyBaxter">Submitted in MyBaxter</option><option value="partial">Partial</option><option value="delivered">Delivered</option></select></div>
+          <div><label>Planned home delivery</label><input id="homeQty" type="number" min="0" step="1"></div>
+          <div><label>Planned clinic pickup</label><input id="clinicQty" type="number" min="0" step="1"></div>
+          <div class="full"><label>Notes</label><textarea id="notes"></textarea></div>
         </div>
-
-        <div id="checks" style="margin-top:16px;"></div>
+        <div id="checks" class="card" style="margin-top:12px;"><div class="muted">Select an item or tap + New.</div></div>
       </div>
     </section>
 
     <section id="handoffView" class="card hidden">
-      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
-        <div><div class="muted">Portal handoff</div><h3 style="margin:0;">MyBaxter list</h3></div>
-        <button id="copyHomeBtn">Copy home list</button>
-      </div>
-      <div class="actions" style="margin-bottom:12px;">
-        <a href="https://my.service.baxter.com/login?locale=us" target="_blank"><button>Open MyBaxter</button></a>
-        <a href="https://www.pdempowers.com/patient/mobile-ordering" target="_blank"><button>Mobile ordering info</button></a>
-      </div>
-      <div id="handoffList"></div>
-      <div class="actions" style="margin-top:12px;">
-        <button class="primary" id="markSubmittedBtn">Mark submitted</button>
-      </div>
+      <div class="row" style="margin-bottom:12px;"><div><div class="muted">Portal handoff</div><h3 style="margin:0;">MyBaxter list</h3></div><button id="copyHomeBtn">Copy home list</button></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;"><a href="https://my.service.baxter.com/login?locale=us" target="_blank"><button>Open MyBaxter</button></a><a href="https://www.pdempowers.com/patient/mobile-ordering" target="_blank"><button>Mobile ordering info</button></a></div>
+      <div id="handoffList" class="list"></div>
+      <div style="margin-top:12px;"><button id="markSubmittedBtn" class="primary">Mark submitted</button></div>
     </section>
 
-    <section id="clinicView" class="card hidden">
-      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
-        <div><div class="muted">Clinic list</div><h3 style="margin:0;">Clinic pickup</h3></div>
-        <button id="copyClinicBtn">Copy clinic list</button>
-      </div>
-      <div id="clinicList"></div>
-    </section>
-
-    <section id="historyView" class="card hidden">
-      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
-        <div><div class="muted">Local history</div><h3 style="margin:0;">Order history</h3></div>
-        <button id="clearHistoryBtn">Clear history</button>
-      </div>
-      <div id="historyList"></div>
-    </section>
+    <section id="clinicView" class="card hidden"><div class="row" style="margin-bottom:12px;"><div><div class="muted">Clinic list</div><h3 style="margin:0;">Clinic pickup</h3></div><button id="copyClinicBtn">Copy clinic list</button></div><div id="clinicList" class="list"></div></section>
+    <section id="historyView" class="card hidden"><div class="row" style="margin-bottom:12px;"><div><div class="muted">Local history</div><h3 style="margin:0;">Order history</h3></div><button id="clearHistoryBtn">Clear history</button></div><div id="historyList" class="list"></div></section>
   </div>
 
-  <div class="bottom">
-    <div class="actions">
-      <button class="primary" id="saveBtn">Save</button>
-      <button id="newBtn">+ New</button>
-      <button id="duplicateBtn">Duplicate</button>
-      <button id="resetBtn">Reset</button>
-      <button id="exportBtn">Export</button>
-    </div>
-  </div>
+  <div class="bottom"><div class="actions"><button id="saveBtn" class="primary">Save</button><button id="newBtn">+ New</button><button id="deleteBtn">Delete</button><button id="duplicateBtn">Duplicate</button><button id="resetBtn">Reset</button><button id="exportBtn">Export</button></div></div>
 
- <script>
-  const STORAGE_KEY = 'pd-supply-track-v4-safe';
+  <script>
+    const STORAGE_KEY = 'pd-supply-track-v4-fixed';
+    const state = loadState() || { activeTab:'inventory', selectedId:null, history:[], items:[] };
+    const el = id => document.getElementById(id);
+    const refs = ['itemList','search','editorTitle','statusBadge','checks','handoffList','clinicList','historyList','countItems','countReorder','countClinic','countHistory','inventoryView','handoffView','clinicView','historyView','name','category','unit','onHand','biweeklyNeed','reorderPoint','orderedQty','deliveryStatus','homeQty','clinicQty','notes'].reduce((a,id)=>{a[id]=el(id);return a;},{});
+    let suppressSync = false;
 
-  const seed = {
-    activeTab: 'inventory',
-    selectedId: null,
-    history: [],
-    items: []
-  };
+    function loadState(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){ return null; } }
+    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function selectedItem(){ return state.items.find(i => i.id === state.selectedId) || null; }
+    function esc(v){ return String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function makeId(){ const nums = state.items.map(i => Number(String(i.id||'').replace(/\D/g,'')) || 3000); return 'PD-' + (Math.max(3000, ...nums) + 1); }
+    function reorderQty(item){ return Math.max(0, Number(item.biweeklyNeed||0) - Number(item.onHand||0) - Number(item.orderedQty||0)); }
+    function plannedList(){ return state.items.map(item => { const total = reorderQty(item); let planHome = Number(item.homeQty||0); let planClinic = Number(item.clinicQty||0); if(!planHome && !planClinic && total>0) planHome = total; planHome = Math.max(0, Math.min(planHome, total)); planClinic = Math.max(0, Math.min(planClinic, total)); return {...item, suggest:total, planHome, planClinic}; }).filter(i => i.suggest > 0 || i.planClinic > 0); }
+    function statusFor(item){ if(Number(item.onHand||0) <= Number(item.reorderPoint||0)) return ['Order now','warn']; if(reorderQty(item) > 0) return ['Plan order','warn']; if(item.deliveryStatus === 'submitted in MyBaxter') return ['Submitted','badge']; return ['Stable','badge']; }
 
-  const state = loadState() || JSON.parse(JSON.stringify(seed));
+    function renderTabs(){ document.querySelectorAll('#tabs button').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.activeTab)); refs.inventoryView.classList.toggle('hidden', state.activeTab !== 'inventory'); refs.handoffView.classList.toggle('hidden', state.activeTab !== 'handoff'); refs.clinicView.classList.toggle('hidden', state.activeTab !== 'clinic'); refs.historyView.classList.toggle('hidden', state.activeTab !== 'history'); }
+    function renderStats(){ const p = plannedList(); refs.countItems.textContent = state.items.length; refs.countReorder.textContent = p.filter(i => i.planHome > 0 || i.suggest > 0).length; refs.countClinic.textContent = p.filter(i => i.planClinic > 0).length; refs.countHistory.textContent = state.history.length; }
+    function renderList(){ const q = refs.search.value.trim().toLowerCase(); const list = state.items.filter(i => [i.name,i.category,i.notes].join(' ').toLowerCase().includes(q)); if(!list.length){ refs.itemList.innerHTML = '<div class="empty">No supplies yet. Tap + New to add your first item.</div>'; return; } refs.itemList.innerHTML = list.map(item => { const s = statusFor(item); return `<button class="item card ${item.id===state.selectedId?'selected':''}" data-id="${item.id}"><div class="row"><strong>${esc(item.name || 'Untitled supply')}</strong><span class="badge ${s[1]}">${s[0]}</span></div><div class="muted">${esc(item.category)} · ${esc(item.onHand)} ${esc(item.unit || 'units')}</div><div class="muted">Bi-weekly need ${esc(item.biweeklyNeed)} · Ordered ${esc(item.orderedQty)}</div></button>`; }).join(''); refs.itemList.querySelectorAll('[data-id]').forEach(btn => btn.addEventListener('click', () => { state.selectedId = btn.getAttribute('data-id'); saveState(); render(); })); }
+    function renderEditor(){ const item = selectedItem(); suppressSync = true; if(!item){ refs.editorTitle.textContent='Supply item'; refs.statusBadge.textContent='Stable'; refs.statusBadge.className='badge'; ['name','unit','notes','onHand','biweeklyNeed','reorderPoint','orderedQty','homeQty','clinicQty'].forEach(k => refs[k].value=''); refs.category.value='PD supplies'; refs.deliveryStatus.value='not ordered'; refs.checks.innerHTML='<div class="muted">Select an item or tap + New.</div>'; suppressSync = false; return; } const s = statusFor(item); refs.editorTitle.textContent = (item.name || 'Untitled supply') + ' · ' + item.id; refs.statusBadge.textContent = s[0]; refs.statusBadge.className = 'badge ' + s[1]; refs.name.value = item.name || ''; refs.category.value = item.category || 'PD supplies'; refs.unit.value = item.unit || ''; refs.onHand.value = item.onHand ?? ''; refs.biweeklyNeed.value = item.biweeklyNeed ?? ''; refs.reorderPoint.value = item.reorderPoint ?? ''; refs.orderedQty.value = item.orderedQty ?? ''; refs.deliveryStatus.value = item.deliveryStatus || 'not ordered'; refs.homeQty.value = item.homeQty ?? ''; refs.clinicQty.value = item.clinicQty ?? ''; refs.notes.value = item.notes || ''; refs.checks.innerHTML = '<div class="muted">Bi-weekly target covered: ' + ((Number(item.onHand||0)+Number(item.orderedQty||0)>=Number(item.biweeklyNeed||0)) ? 'Yes' : 'No') + '</div><div class="muted">Needs reorder: ' + (reorderQty(item)>0 ? 'Yes' : 'No') + '</div>'; suppressSync = false; }
+    function renderHandoff(){ const plan = plannedList().filter(i => i.planHome > 0); refs.handoffList.innerHTML = plan.length ? plan.map(item => `<div class="card"><strong>${esc(item.name || 'Untitled supply')}</strong><div class="muted">Home delivery: ${esc(item.planHome)} ${esc(item.unit || 'units')}</div></div>`).join('') : '<div class="empty">No planned home delivery right now.</div>'; }
+    function renderClinic(){ const plan = plannedList().filter(i => i.planClinic > 0); refs.clinicList.innerHTML = plan.length ? plan.map(item => `<div class="card"><strong>${esc(item.name || 'Untitled supply')}</strong><div class="muted">Clinic pickup: ${esc(item.planClinic)} ${esc(item.unit || 'units')}</div></div>`).join('') : '<div class="empty">No clinic pickup planned right now.</div>'; }
+    function renderHistory(){ refs.historyList.innerHTML = state.history.length ? state.history.slice().reverse().map(entry => `<div class="card"><strong>${new Date(entry.at).toLocaleString()}</strong><div class="muted">${entry.items.map(i => i.name + ': ' + i.qty + ' ' + i.unit).join(' • ')}</div></div>`).join('') : '<div class="empty">No order history yet.</div>'; }
+    function render(){ renderTabs(); renderStats(); renderList(); renderEditor(); renderHandoff(); renderClinic(); renderHistory(); }
 
-  const el = id => document.getElementById(id);
+    function syncFormToSelected(){ if(suppressSync) return; const item = selectedItem(); if(!item) return; item.name = refs.name.value.trim(); item.category = refs.category.value; item.unit = refs.unit.value.trim(); item.onHand = Number(refs.onHand.value || 0); item.biweeklyNeed = Number(refs.biweeklyNeed.value || 0); item.reorderPoint = Number(refs.reorderPoint.value || 0); item.orderedQty = Number(refs.orderedQty.value || 0); item.deliveryStatus = refs.deliveryStatus.value; item.homeQty = Number(refs.homeQty.value || 0); item.clinicQty = Number(refs.clinicQty.value || 0); item.notes = refs.notes.value.trim(); saveState(); render(); }
+    function addNewItem(){ const id = makeId(); state.items.unshift({ id, name:'', category:'PD supplies', unit:'', onHand:0, biweeklyNeed:0, reorderPoint:0, orderedQty:0, deliveryStatus:'not ordered', homeQty:0, clinicQty:0, notes:'' }); state.selectedId = id; saveState(); render(); refs.name.focus(); }
+    function deleteCurrent(){ const item = selectedItem(); if(!item) return; state.items = state.items.filter(i => i.id !== item.id); state.selectedId = state.items[0] ? state.items[0].id : null; saveState(); render(); }
+    function duplicateCurrent(){ const item = selectedItem(); if(!item) return; const copy = JSON.parse(JSON.stringify(item)); copy.id = makeId(); copy.name = (item.name || 'Supply') + ' copy'; state.items.unshift(copy); state.selectedId = copy.id; saveState(); render(); }
+    function exportData(){ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pd-supply-track-v4-fixed.json'; a.click(); URL.revokeObjectURL(a.href); }
+    function copyHome(){ const plan = plannedList().filter(i => i.planHome > 0); const text = plan.length ? plan.map(i => `${i.name || 'Untitled supply'}: ${i.planHome} ${i.unit || 'units'}`).join('\\n') : 'No home delivery planned'; navigator.clipboard.writeText(text).catch(() => alert(text)); }
+    function copyClinic(){ const plan = plannedList().filter(i => i.planClinic > 0); const text = plan.length ? plan.map(i => `${i.name || 'Untitled supply'}: ${i.planClinic} ${i.unit || 'units'}`).join('\\n') : 'No clinic pickup planned'; navigator.clipboard.writeText(text).catch(() => alert(text)); }
+    function markSubmitted(){ const plan = plannedList().filter(i => i.planHome > 0); if(!plan.length) return; state.history.push({ at:new Date().toISOString(), items:plan.map(i => ({name:i.name || 'Untitled supply', qty:i.planHome, unit:i.unit || 'units'})) }); plan.forEach(p => { const item = state.items.find(i => i.id === p.id); if(item){ item.orderedQty = Number(item.orderedQty||0) + Number(p.planHome||0); item.deliveryStatus = 'submitted in MyBaxter'; }}); saveState(); render(); }
 
-  const refs = {
-    itemList: el('itemList'),
-    search: el('search'),
-    editorTitle: el('editorTitle'),
-    statusBadge: el('statusBadge'),
-    checks: el('checks'),
-    handoffList: el('handoffList'),
-    clinicList: el('clinicList'),
-    historyList: el('historyList'),
-    countItems: el('countItems'),
-    countReorder: el('countReorder'),
-    countClinic: el('countClinic'),
-    countHistory: el('countHistory'),
-    inventoryView: el('inventoryView'),
-    handoffView: el('handoffView'),
-    clinicView: el('clinicView'),
-    historyView: el('historyView'),
-    name: el('name'),
-    category: el('category'),
-    unit: el('unit'),
-    onHand: el('onHand'),
-    biweeklyNeed: el('biweeklyNeed'),
-    reorderPoint: el('reorderPoint'),
-    orderedQty: el('orderedQty'),
-    deliveryStatus: el('deliveryStatus'),
-    homeQty: el('homeQty'),
-    clinicQty: el('clinicQty'),
-    notes: el('notes')
-  };
+    document.querySelectorAll('#tabs button').forEach(btn => btn.addEventListener('click', () => { state.activeTab = btn.dataset.tab; saveState(); render(); }));
+    ['name','unit','onHand','biweeklyNeed','reorderPoint','orderedQty','homeQty','clinicQty','notes'].forEach(id => el(id).addEventListener('input', syncFormToSelected));
+    ['category','deliveryStatus'].forEach(id => el(id).addEventListener('change', syncFormToSelected));
+    el('newBtn').addEventListener('click', addNewItem);
+    el('saveBtn').addEventListener('click', syncFormToSelected);
+    el('deleteBtn').addEventListener('click', deleteCurrent);
+    el('duplicateBtn').addEventListener('click', duplicateCurrent);
+    el('resetBtn').addEventListener('click', () => { localStorage.removeItem(STORAGE_KEY); location.reload(); });
+    el('exportBtn').addEventListener('click', exportData);
+    el('copyHomeBtn').addEventListener('click', copyHome);
+    el('copyClinicBtn').addEventListener('click', copyClinic);
+    el('markSubmittedBtn').addEventListener('click', markSubmitted);
+    el('clearHistoryBtn').addEventListener('click', () => { state.history = []; saveState(); render(); });
+    el('search').addEventListener('input', renderList);
+    el('themeBtn').addEventListener('click', () => { document.body.classList.toggle('dark'); });
 
-  function loadState() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY));
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
-  function selectedItem() {
-    return state.items.find(i => i.id === state.selectedId) || null;
-  }
-
-  function esc(v) {
-    return String(v ?? '').replace(/[&<>"']/g, function(m) {
-      return {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[m];
-    });
-  }
-
-  function makeId() {
-    const nums = state.items.map(i => Number((i.id || '').replace(/\D/g, '')) || 3000);
-    return 'PD-' + (Math.max(3000, ...nums) + 1);
-  }
-
-  function reorderQty(item) {
-    return Math.max(
-      0,
-      Number(item.biweeklyNeed || 0) -
-      Number(item.onHand || 0) -
-      Number(item.orderedQty || 0)
-    );
-  }
-
-  function plannedList() {
-    return state.items.map(item => {
-      const total = reorderQty(item);
-      let planHome = Number(item.homeQty || 0);
-      let planClinic = Number(item.clinicQty || 0);
-
-      if (!planHome && !planClinic && total > 0) planHome = total;
-      if (planHome < 0) planHome = 0;
-      if (planClinic < 0) planClinic = 0;
-      if (planHome > total) planHome = total;
-      if (planClinic > total) planClinic = total;
-
-      return Object.assign({}, item, {
-        suggest: total,
-        planHome: planHome,
-        planClinic: planClinic
-      });
-    }).filter(i => i.suggest > 0 || i.planClinic > 0);
-  }
-
-  function statusFor(item) {
-    if (Number(item.onHand || 0) <= Number(item.reorderPoint || 0)) return ['Order now', 'danger'];
-    if (reorderQty(item) > 0) return ['Plan order', 'warn'];
-    if (item.deliveryStatus === 'submitted in MyBaxter') return ['Submitted', 'ok'];
-    return ['Stable', 'ok'];
-  }
-
-  function renderTabs() {
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === state.activeTab);
-    });
-    refs.inventoryView.classList.toggle('hidden', state.activeTab !== 'inventory');
-    refs.handoffView.classList.toggle('hidden', state.activeTab !== 'handoff');
-    refs.clinicView.classList.toggle('hidden', state.activeTab !== 'clinic');
-    refs.historyView.classList.toggle('hidden', state.activeTab !== 'history');
-  }
-
-  function renderStats() {
-    const plan = plannedList();
-    refs.countItems.textContent = state.items.length;
-    refs.countReorder.textContent = plan.filter(i => i.planHome > 0 || i.suggest > 0).length;
-    refs.countClinic.textContent = plan.filter(i => i.planClinic > 0).length;
-    refs.countHistory.textContent = state.history.length;
-  }
-
-  function renderList() {
-    const q = refs.search.value.trim().toLowerCase();
-    const list = state.items.filter(i =>
-      [i.name, i.category, i.notes].join(' ').toLowerCase().includes(q)
-    );
-
-    if (!list.length) {
-      refs.itemList.innerHTML = '<div class="empty">No supplies yet. Tap + New to add your first item.</div>';
-      return;
-    }
-
-    refs.itemList.innerHTML = list.map(item => {
-      const status = statusFor(item);
-      return `
-        <button class="item card ${item.id === state.selectedId ? 'active' : ''}" data-id="${item.id}">
-          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
-            <strong>${esc(item.name)}</strong>
-            <span class="badge ${status[1]}">${status[0]}</span>
-          </div>
-          <div class="muted">${esc(item.category)} · ${esc(item.onHand)} ${esc(item.unit)}</div>
-          <div class="muted">Bi-weekly need ${esc(item.biweeklyNeed)} · Ordered ${esc(item.orderedQty)}</div>
-        </button>
-      `;
-    }).join('');
-
-    refs.itemList.querySelectorAll('[data-id]').forEach(btn => {
-      btn.addEventListener('click', function() {
-        state.selectedId = this.getAttribute('data-id');
-        saveState();
-        render();
-      });
-    });
-  }
-
-  function renderEditor() {
-    const item = selectedItem();
-
-    if (!item) {
-      refs.editorTitle.textContent = 'Supply item';
-      refs.statusBadge.textContent = 'Stable';
-      refs.statusBadge.className = 'badge';
-      ['name','unit','notes','onHand','biweeklyNeed','reorderPoint','orderedQty','homeQty','clinicQty'].forEach(k => {
-        refs[k].value = '';
-      });
-      refs.category.value = 'PD supplies';
-      refs.deliveryStatus.value = 'not ordered';
-      refs.checks.innerHTML = '<div class="empty">Select an item or tap + New.</div>';
-      return;
-    }
-
-    const status = statusFor(item);
-    refs.editorTitle.textContent = item.name + ' · ' + item.id;
-    refs.statusBadge.textContent = status[0];
-    refs.statusBadge.className = 'badge ' + status[1];
-
-    refs.name.value = item.name || '';
-    refs.category.value = item.category || 'PD supplies';
-    refs.unit.value = item.unit || '';
-    refs.onHand.value = item.onHand ?? '';
-    refs.biweeklyNeed.value = item.biweeklyNeed ?? '';
-    refs.reorderPoint.value = item.reorderPoint ?? '';
-    refs.orderedQty.value = item.orderedQty ?? '';
-    refs.deliveryStatus.value = item.deliveryStatus || 'not ordered';
-    refs.homeQty.value = item.homeQty ?? '';
-    refs.clinicQty.value = item.clinicQty ?? '';
-    refs.notes.value = item.notes || '';
-
-    refs.checks.innerHTML = `
-      <div class="card">
-        <div class="muted">Bi-weekly target covered: ${
-          Number(item.onHand || 0) + Number(item.orderedQty || 0) >= Number(item.biweeklyNeed || 0)
-            ? 'Yes'
-            : 'No'
-        }</div>
-        <div class="muted">Needs reorder: ${reorderQty(item) > 0 ? 'Yes' : 'No'}</div>
-      </div>
-    `;
-  }
-
-  function renderHandoff() {
-    const plan = plannedList().filter(i => i.planHome > 0);
-
-    if (!plan.length) {
-      refs.handoffList.innerHTML = '<div class="empty">No planned home delivery right now.</div>';
-      return;
-    }
-
-    refs.handoffList.innerHTML = plan.map(item => `
-      <div class="card">
-        <strong>${esc(item.name)}</strong>
-        <div class="muted">Home delivery: ${esc(item.planHome)} ${esc(item.unit)}</div>
-      </div>
-    `).join('');
-  }
-
-  function renderClinic() {
-    const plan = plannedList().filter(i => i.planClinic > 0);
-
-    if (!plan.length) {
-      refs.clinicList.innerHTML = '<div class="empty">No clinic pickup planned right now.</div>';
-      return;
-    }
-
-    refs.clinicList.innerHTML = plan.map(item => `
-      <div class="card">
-        <strong>${esc(item.name)}</strong>
-        <div class="muted">Clinic pickup: ${esc(item.planClinic)} ${esc(item.unit)}</div>
-      </div>
-    `).join('');
-  }
-
-  function renderHistory() {
-    if (!state.history.length) {
-      refs.historyList.innerHTML = '<div class="empty">No order history yet.</div>';
-      return;
-    }
-
-    refs.historyList.innerHTML = state.history.slice().reverse().map(entry => `
-      <div class="card">
-        <strong>${new Date(entry.at).toLocaleString()}</strong>
-        <div class="muted">${entry.items.map(i => i.name + ': ' + i.qty + ' ' + i.unit).join(' • ')}</div>
-      </div>
-    `).join('');
-  }
-
-  function render() {
-    renderTabs();
-    renderStats();
-    renderList();
-    renderEditor();
-    renderHandoff();
-    renderClinic();
-    renderHistory();
-  }
-
-  function syncFormToSelected() {
-    const item = selectedItem();
-    if (!item) return;
-
-    item.name = refs.name.value.trim() || 'Untitled supply';
-    item.category = refs.category.value;
-    item.unit = refs.unit.value.trim() || 'units';
-    item.onHand = Number(refs.onHand.value || 0);
-    item.biweeklyNeed = Number(refs.biweeklyNeed.value || 0);
-    item.reorderPoint = Number(refs.reorderPoint.value || 0);
-    item.orderedQty = Number(refs.orderedQty.value || 0);
-    item.deliveryStatus = refs.deliveryStatus.value;
-    item.homeQty = Number(refs.homeQty.value || 0);
-    item.clinicQty = Number(refs.clinicQty.value || 0);
-    item.notes = refs.notes.value.trim();
-
-    saveState();
     render();
-  }
-
-  function saveCurrent() {
-    syncFormToSelected();
-  }
-
-  function addNewItem() {
-    const id = makeId();
-    const item = {
-      id: id,
-      name: 'New supply',
-      category: 'PD supplies',
-      unit: 'boxes',
-      onHand: 0,
-      biweeklyNeed: 0,
-      reorderPoint: 0,
-      orderedQty: 0,
-      deliveryStatus: 'not ordered',
-      homeQty: 0,
-      clinicQty: 0,
-      notes: ''
-    };
-
-    state.items.unshift(item);
-    state.selectedId = id;
-    saveState();
-    render();
-  }
-
-  function duplicateCurrent() {
-    const item = selectedItem();
-    if (!item) return;
-
-    const copy = JSON.parse(JSON.stringify(item));
-    copy.id = makeId();
-    copy.name = item.name + ' copy';
-    state.items.unshift(copy);
-    state.selectedId = copy.id;
-    saveState();
-    render();
-  }
-
-  function exportData() {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'pd-supply-track-v4-safe.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function copyHome() {
-    const plan = plannedList().filter(i => i.planHome > 0);
-    const text = plan.length
-      ? plan.map(i => `${i.name}: ${i.planHome} ${i.unit}`).join('\n')
-      : 'No home delivery planned';
-
-    navigator.clipboard.writeText(text).catch(() => alert(text));
-  }
-
-  function copyClinic() {
-    const plan = plannedList().filter(i => i.planClinic > 0);
-    const text = plan.length
-      ? plan.map(i => `${i.name}: ${i.planClinic} ${i.unit}`).join('\n')
-      : 'No clinic pickup planned';
-
-    navigator.clipboard.writeText(text).catch(() => alert(text));
-  }
-
-  function markSubmitted() {
-    const plan = plannedList().filter(i => i.planHome > 0);
-    if (!plan.length) return;
-
-    state.history.push({
-      at: new Date().toISOString(),
-      items: plan.map(i => ({ name: i.name, qty: i.planHome, unit: i.unit }))
-    });
-
-    plan.forEach(p => {
-      const item = state.items.find(i => i.id === p.id);
-      if (item) {
-        item.orderedQty = Number(item.orderedQty || 0) + Number(p.planHome || 0);
-        item.deliveryStatus = 'submitted in MyBaxter';
-      }
-    });
-
-    saveState();
-    render();
-  }
-
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', function() {
-      state.activeTab = this.dataset.tab;
-      saveState();
-      render();
-    });
-  });
-
-  [
-    'name',
-    'unit',
-    'onHand',
-    'biweeklyNeed',
-    'reorderPoint',
-    'orderedQty',
-    'homeQty',
-    'clinicQty',
-    'notes'
-  ].forEach(function(id) {
-    el(id).addEventListener('input', syncFormToSelected);
-  });
-
-  [
-    'category',
-    'deliveryStatus'
-  ].forEach(function(id) {
-    el(id).addEventListener('change', syncFormToSelected);
-  });
-
-  el('newBtn').addEventListener('click', addNewItem);
-  el('saveBtn').addEventListener('click', saveCurrent);
-  el('duplicateBtn').addEventListener('click', duplicateCurrent);
-  el('resetBtn').addEventListener('click', function() {
-    localStorage.removeItem(STORAGE_KEY);
-    location.reload();
-  });
-  el('exportBtn').addEventListener('click', exportData);
-  el('copyHomeBtn').addEventListener('click', copyHome);
-  el('copyClinicBtn').addEventListener('click', copyClinic);
-  el('markSubmittedBtn').addEventListener('click', markSubmitted);
-  el('clearHistoryBtn').addEventListener('click', function() {
-    state.history = [];
-    saveState();
-    render();
-  });
-  el('search').addEventListener('input', renderList);
-
-  el('themeBtn').addEventListener('click', function() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme');
-    html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-  });
-
-  render();
-</script>
+  </script>
 </body>
 </html>
