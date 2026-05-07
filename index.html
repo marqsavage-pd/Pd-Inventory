@@ -1,272 +1,193 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="theme-color" content="#01696f" />
-  <title>PD Supply Track V4 Clean</title>
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PD Supply Track V4</title>
   <style>
-    :root, [data-theme="light"] {
-      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2rem);
-      --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem;
-      --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-surface-offset:#f3f0ec; --color-border:#d4d1ca;
-      --color-text:#28251d; --color-text-muted:#6f6b64; --color-text-inverse:#f9f8f4;
-      --color-primary:#01696f; --color-primary-highlight:#cedcd8; --color-success:#437a22; --color-warning:#964219; --color-error:#a12c7b;
-      --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px; --shadow-sm:0 1px 2px rgb(40 37 29 / 0.06);
-      --font-body:'Satoshi', Inter, sans-serif;
-    }
-    [data-theme="dark"] {
-      --color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d; --color-surface-offset:#1d1c1a; --color-border:#393836;
-      --color-text:#cdccca; --color-text-muted:#9c9994; --color-text-inverse:#2b2a28;
-      --color-primary:#4f98a3; --color-primary-highlight:#313b3b; --color-success:#6daa45; --color-warning:#bb653b; --color-error:#d163a7;
-      --shadow-sm:0 1px 2px rgb(0 0 0 / 0.18);
+    :root{
+      --bg:#f7f6f2; --card:#ffffff; --line:#d9d5cd; --text:#222; --muted:#666; --accent:#01696f;
+      --warn:#964219; --ok:#2f6f2f; --danger:#a12c7b;
     }
     *{box-sizing:border-box}
-    html{-webkit-text-size-adjust:none;text-size-adjust:none}
-    body{margin:0;font-family:var(--font-body);font-size:var(--text-base);background:var(--color-bg);color:var(--color-text);line-height:1.5}
-    button,input,textarea,select{font:inherit;color:inherit}
-    button{cursor:pointer}
-    a{text-decoration:none;color:inherit}
-    input,select,textarea{min-height:44px}
-    .app{max-width:1100px;margin:0 auto;padding:env(safe-area-inset-top) var(--space-4) calc(6.8rem + env(safe-area-inset-bottom))}
-    .topbar{position:sticky;top:0;z-index:20;padding:var(--space-3) 0;background:color-mix(in oklab,var(--color-bg) 90%, transparent);backdrop-filter:blur(18px);border-bottom:1px solid color-mix(in oklab,var(--color-border) 65%, transparent);margin-bottom:var(--space-4)}
-    .topbar-inner,.row{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3)}
-    .brand{display:flex;align-items:center;gap:var(--space-3)}
-    .logo{width:40px;height:40px;border-radius:14px;background:var(--color-primary);display:grid;place-items:center;color:var(--color-text-inverse);box-shadow:var(--shadow-sm)}
-    .logo svg{width:22px;height:22px}
-    .tiny{font-size:var(--text-xs);color:var(--color-text-muted)}
-    .hero{display:grid;gap:var(--space-3);padding:var(--space-4) 0 var(--space-5)}
-    .hero h2{font-size:var(--text-xl);line-height:1.05;max-width:16ch}
-    .hero p{max-width:62ch;color:var(--color-text-muted);margin:0}
-    .panel{background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-border) 88%, transparent);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
-    .tabs{display:flex;gap:var(--space-2);overflow:auto;padding-bottom:var(--space-1);margin-bottom:var(--space-4)}
-    .tabs button{white-space:nowrap;border:1px solid var(--color-border);background:var(--color-surface);padding:.7rem .95rem;border-radius:var(--radius-full);min-height:42px}
-    .tabs button.active{background:var(--color-primary-highlight);color:var(--color-primary);border-color:transparent;font-weight:700}
-    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-3);margin-bottom:var(--space-4)}
-    .stat{padding:var(--space-4)}
-    .stat-number{font-size:var(--text-xl);font-weight:700}
-    .grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:var(--space-4)}
-    .list,.editor,.handoff{padding:var(--space-4);display:grid;gap:var(--space-4)}
-    .items,.history{display:grid;gap:var(--space-3)}
-    .search{width:100%;padding:.85rem 1rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2)}
-    .item,.history-item,.handoff-card{padding:var(--space-4);border-radius:var(--radius-lg);border:1px solid color-mix(in oklab,var(--color-border) 88%, transparent);background:var(--color-surface-2);display:grid;gap:.45rem;text-align:left}
-    .item.active{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 16%, transparent)}
-    .fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3)}
-    .field,.field-full{display:grid;gap:.35rem}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .app{max-width:1100px;margin:0 auto;padding:16px 16px 96px}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+    .hero{margin-bottom:16px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+    .num{font-size:28px;font-weight:700}
+    .tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px}
+    .primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .tab.active{background:#dbe9e6;border-color:#dbe9e6;color:var(--accent);font-weight:700}
+    .grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:16px}
+    .list{display:grid;gap:12px}
+    .item{display:grid;gap:6px;text-align:left}
+    .item.active{outline:3px solid #dbe9e6}
+    .muted{color:var(--muted);font-size:13px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field,.field-full{display:grid;gap:6px}
     .field-full{grid-column:1/-1}
-    label{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.06em}
-    input,select,textarea{width:100%;padding:.85rem .95rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2)}
-    textarea{min-height:84px;resize:vertical}
-    .badge{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .6rem;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:700;background:var(--color-primary-highlight);color:var(--color-primary)}
-    .badge.warn{background:color-mix(in oklab,var(--color-warning) 16%, transparent);color:var(--color-warning)}
-    .badge.success{background:color-mix(in oklab,var(--color-success) 16%, transparent);color:var(--color-success)}
-    .badge.error{background:color-mix(in oklab,var(--color-error) 16%, transparent);color:var(--color-error)}
-    .helper{padding:var(--space-4);border-radius:var(--radius-lg);background:var(--color-surface-offset);border:1px dashed var(--color-border);display:grid;gap:.45rem}
-    .btn{min-height:44px;padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface-2)}
-    .btn-primary{background:var(--color-primary);border-color:var(--color-primary);color:var(--color-text-inverse)}
-    .btn-row{display:flex;gap:var(--space-3);flex-wrap:wrap}
-    .btn-row .btn,.btn-row a{flex:1}
-    .link-btn{display:flex;align-items:center;justify-content:center;min-height:44px;padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface-2)}
-    .checklist{display:grid;gap:var(--space-2)}
-    .check{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:.8rem .9rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2)}
-    .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom));background:color-mix(in oklab,var(--color-bg) 92%, transparent);backdrop-filter:blur(18px);border-top:1px solid color-mix(in oklab,var(--color-border) 70%, transparent)}
-    .bottom-nav .btn-row{max-width:1100px;margin:0 auto}
-    .empty{padding:var(--space-6);text-align:center;color:var(--color-text-muted)}
-    @media (max-width: 920px){.grid,.stats,.fields{grid-template-columns:1fr}.hero h2{max-width:none}}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    textarea{min-height:90px;resize:vertical}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#dbe9e6;color:var(--accent);font-size:12px;font-weight:700}
+    .warn{background:#f6e3da;color:var(--warn)}
+    .ok{background:#e2f1e2;color:var(--ok)}
+    .danger{background:#f4ddee;color:var(--danger)}
+    .hidden{display:none}
+    .empty{padding:24px;text-align:center;color:var(--muted)}
+    .bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(247,246,242,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px}
+    .bottom .actions{max-width:1100px;margin:0 auto}
+    @media (max-width:900px){
+      .stats,.grid,.fields{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M7 4v16"></path>
-              <path d="M12 7v10"></path>
-              <path d="M17 4v16"></path>
-              <path d="M5 7c2.2-2 11.8-2 14 0"></path>
-              <path d="M5 17c2.2 2 11.8 2 14 0"></path>
-            </svg>
-          </div>
-          <div>
-            <h1>PD Supply Track V4 Clean</h1>
-            <div class="tiny">Empty start · MyBaxter handoff · Clinic pickup</div>
-          </div>
-        </div>
-        <button class="btn" id="themeBtn">Theme</button>
+  <div class="app">
+    <div class="top">
+      <div>
+        <h1 style="margin:0;">PD Supply Track V4</h1>
+        <div class="muted">Bi-weekly planner · MyBaxter · Clinic pickup</div>
       </div>
-    </header>
-
-    <section class="hero">
-      <div class="badge">Clean copy</div>
-      <h2>Start empty and plan both delivery and clinic backup.</h2>
-      <p>This clean copy starts empty, keeps the MyBaxter handoff, adds clinic pickup planning, and stores your data locally in this browser using localStorage.</p>
-    </section>
-
-    <section class="stats">
-      <article class="panel stat"><div class="tiny">Supplies</div><div class="stat-number" id="countItems">0</div></article>
-      <article class="panel stat"><div class="tiny">Reorder list</div><div class="stat-number" id="countReorder">0</div></article>
-      <article class="panel stat"><div class="tiny">Planned units</div><div class="stat-number" id="countUnits">0</div></article>
-      <article class="panel stat"><div class="tiny">Submissions logged</div><div class="stat-number" id="countHistory">0</div></article>
-    </section>
-
-    <div class="tabs" id="tabs">
-      <button class="active" data-tab="inventory">Inventory</button>
-      <button data-tab="handoff">MyBaxter handoff</button>
-      <button data-tab="clinic">Clinic pickup</button>
-      <button data-tab="history">Order history</button>
+      <button id="themeBtn">Theme</button>
     </div>
 
-    <section class="grid" id="inventoryView">
-      <section class="panel list">
-        <div>
-          <div class="tiny">Supply list</div>
-          <input id="search" class="search" type="search" placeholder="Search supplies" />
-        </div>
-        <div class="items" id="itemList"></div>
-      </section>
+    <div class="card hero">
+      <div class="badge">Clean copy</div>
+      <h2>Track supplies, home delivery, and clinic pickup.</h2>
+      <p class="muted">Starts empty and saves in this browser.</p>
+    </div>
 
-      <section class="panel editor">
-        <div class="row">
+    <div class="stats">
+      <div class="card"><div class="muted">Items</div><div class="num" id="countItems">0</div></div>
+      <div class="card"><div class="muted">Reorder</div><div class="num" id="countReorder">0</div></div>
+      <div class="card"><div class="muted">Clinic</div><div class="num" id="countClinic">0</div></div>
+      <div class="card"><div class="muted">History</div><div class="num" id="countHistory">0</div></div>
+    </div>
+
+    <div class="tabs" id="tabs" style="margin-bottom:16px;">
+      <button class="tab active" data-tab="inventory">Inventory</button>
+      <button class="tab" data-tab="handoff">MyBaxter</button>
+      <button class="tab" data-tab="clinic">Clinic pickup</button>
+      <button class="tab" data-tab="history">Order history</button>
+    </div>
+
+    <section id="inventoryView" class="grid">
+      <div class="card list">
+        <input id="search" type="search" placeholder="Search supplies">
+        <div id="itemList"></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
           <div>
-            <div class="tiny">Editor</div>
-            <h3 id="editorTitle">Supply item</h3>
+            <div class="muted">Edit supply</div>
+            <h3 id="editorTitle" style="margin:0;">Supply item</h3>
           </div>
           <span class="badge" id="statusBadge">Stable</span>
         </div>
 
         <div class="fields">
-          <div class="field"><label for="name">Supply name</label><input id="name" type="text"></div>
-          <div class="field"><label for="category">Category</label><select id="category"><option>PD supplies</option><option>Support supplies</option><option>Emergency kit</option></select></div>
-          <div class="field"><label for="unit">Unit</label><input id="unit" type="text" placeholder="bags, boxes, etc."></div>
-          <div class="field"><label for="onHand">On hand</label><input id="onHand" type="number" min="0" step="1"></div>
-          <div class="field"><label for="biweeklyNeed">Bi-weekly need</label><input id="biweeklyNeed" type="number" min="0" step="1"></div>
-          <div class="field"><label for="orderedQty">Already ordered</label><input id="orderedQty" type="number" min="0" step="1"></div>
-          <div class="field"><label for="reorderPoint">Reorder at</label><input id="reorderPoint" type="number" min="0" step="1"></div>
-          <div class="field"><label for="deliveryStatus">Portal status</label><select id="deliveryStatus"><option value="not ordered">Not ordered</option><option value="submitted in MyBaxter">Submitted in MyBaxter</option><option value="partial">Partial</option><option value="delivered">Delivered</option></select></div>
-          <div class="field"><label for="homeQty">Planned home delivery (MyBaxter)</label><input id="homeQty" type="number" min="0" step="1"></div>
-          <div class="field"><label for="clinicQty">Planned clinic pickup</label><input id="clinicQty" type="number" min="0" step="1"></div>
-          <div class="field-full"><label for="notes">Notes</label><textarea id="notes" placeholder="Any instructions or clinic notes"></textarea></div>
+          <div class="field"><label>Supply name</label><input id="name" type="text"></div>
+          <div class="field"><label>Category</label><select id="category"><option>PD supplies</option><option>Support supplies</option><option>Emergency</option></select></div>
+          <div class="field"><label>Unit</label><input id="unit" type="text" placeholder="bags, boxes, rolls"></div>
+          <div class="field"><label>On hand</label><input id="onHand" type="number" min="0" step="1"></div>
+          <div class="field"><label>Bi-weekly need</label><input id="biweeklyNeed" type="number" min="0" step="1"></div>
+          <div class="field"><label>Reorder at</label><input id="reorderPoint" type="number" min="0" step="1"></div>
+          <div class="field"><label>Already ordered</label><input id="orderedQty" type="number" min="0" step="1"></div>
+          <div class="field"><label>Portal status</label><select id="deliveryStatus"><option value="not ordered">Not ordered</option><option value="submitted in MyBaxter">Submitted in MyBaxter</option><option value="partial">Partial</option><option value="delivered">Delivered</option></select></div>
+          <div class="field"><label>Planned home delivery</label><input id="homeQty" type="number" min="0" step="1"></div>
+          <div class="field"><label>Planned clinic pickup</label><input id="clinicQty" type="number" min="0" step="1"></div>
+          <div class="field-full"><label>Notes</label><textarea id="notes"></textarea></div>
         </div>
 
-        <div class="helper">
-          <strong>Tip</strong>
-          <div class="tiny">Use home delivery for your regular portal order. Use clinic pickup for backup supplies if your PD team tells you to collect extras or if you may run short before your next shipment.</div>
-        </div>
-
-        <div class="checklist" id="quickChecks"></div>
-      </section>
-    </section>
-
-    <section class="panel handoff" id="handoffView" hidden>
-      <div class="row">
-        <div><div class="tiny">Portal handoff</div><h3>Submit through MyBaxter</h3></div>
-        <button class="btn" id="copyListBtn">Copy home-delivery list</button>
+        <div id="checks" style="margin-top:16px;"></div>
       </div>
-
-      <article class="handoff-card">
-        <strong>Open official portal</strong>
-        <div class="tiny">Use the official portal for your normal delivery order. The app only prepares the list and tracks what you planned.</div>
-        <div class="btn-row">
-          <a class="link-btn" href="https://my.service.baxter.com/login?locale=us" target="_blank" rel="noopener noreferrer">Open MyBaxter login</a>
-          <a class="link-btn" href="https://www.pdempowers.com/patient/mobile-ordering" target="_blank" rel="noopener noreferrer">Open Mobile Ordering info</a>
-        </div>
-      </article>
-
-      <article class="handoff-card">
-        <strong>Planned home delivery</strong>
-        <div class="items" id="handoffList"></div>
-      </article>
-
-      <article class="handoff-card">
-        <strong>After you submit in MyBaxter</strong>
-        <div class="btn-row">
-          <button class="btn btn-primary" id="markSubmittedBtn">Mark planned order as submitted</button>
-          <button class="btn" id="markCopiedBtn">Mark list reviewed</button>
-        </div>
-      </article>
     </section>
 
-    <section class="panel handoff" id="clinicView" hidden>
-      <div class="row">
-        <div><div class="tiny">Clinic list</div><h3>Supplies to request from clinic</h3></div>
-        <button class="btn" id="copyClinicBtn">Copy clinic list</button>
+    <section id="handoffView" class="card hidden">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
+        <div><div class="muted">Portal handoff</div><h3 style="margin:0;">MyBaxter list</h3></div>
+        <button id="copyHomeBtn">Copy home list</button>
       </div>
-      <div class="items" id="clinicList"></div>
-    </section>
-
-    <section class="panel handoff" id="historyView" hidden>
-      <div class="row">
-        <div><div class="tiny">Local history</div><h3>Past planned orders</h3></div>
-        <button class="btn" id="clearHistoryBtn">Clear history</button>
+      <div class="actions" style="margin-bottom:12px;">
+        <a href="https://my.service.baxter.com/login?locale=us" target="_blank"><button>Open MyBaxter</button></a>
+        <a href="https://www.pdempowers.com/patient/mobile-ordering" target="_blank"><button>Mobile ordering info</button></a>
       </div>
-      <div class="history" id="historyList"></div>
+      <div id="handoffList"></div>
+      <div class="actions" style="margin-top:12px;">
+        <button class="primary" id="markSubmittedBtn">Mark submitted</button>
+      </div>
     </section>
-  </main>
 
-  <footer class="bottom-nav">
-    <div class="btn-row">
-      <button class="btn btn-primary" id="saveBtn">Save</button>
-      <button class="btn" id="newBtn">New</button>
-      <button class="btn" id="duplicateBtn">Duplicate</button>
-      <button class="btn" id="resetBtn">Reset</button>
-      <button class="btn" id="exportBtn">Export</button>
+    <section id="clinicView" class="card hidden">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
+        <div><div class="muted">Clinic list</div><h3 style="margin:0;">Clinic pickup</h3></div>
+        <button id="copyClinicBtn">Copy clinic list</button>
+      </div>
+      <div id="clinicList"></div>
+    </section>
+
+    <section id="historyView" class="card hidden">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;">
+        <div><div class="muted">Local history</div><h3 style="margin:0;">Order history</h3></div>
+        <button id="clearHistoryBtn">Clear history</button>
+      </div>
+      <div id="historyList"></div>
+    </section>
+  </div>
+
+  <div class="bottom">
+    <div class="actions">
+      <button class="primary" id="saveBtn">Save</button>
+      <button id="newBtn">+ New</button>
+      <button id="duplicateBtn">Duplicate</button>
+      <button id="resetBtn">Reset</button>
+      <button id="exportBtn">Export</button>
     </div>
-  </footer>
+  </div>
 
   <script>
-    const STORAGE_KEY = 'pd-supply-track-v4-clean';
+    const STORAGE_KEY = 'pd-supply-track-v4-safe';
+    const seed = { activeTab:'inventory', selectedId:null, history:[], items:[] };
+    const state = loadState() || JSON.parse(JSON.stringify(seed));
 
-    const seed = {
-      activeTab: 'inventory',
-      selectedId: null,
-      orderReviewed: false,
-      history: [],
-      items: []
+    const el = id => document.getElementById(id);
+
+    const refs = {
+      itemList: el('itemList'),
+      search: el('search'),
+      editorTitle: el('editorTitle'),
+      statusBadge: el('statusBadge'),
+      checks: el('checks'),
+      handoffList: el('handoffList'),
+      clinicList: el('clinicList'),
+      historyList: el('historyList'),
+      countItems: el('countItems'),
+      countReorder: el('countReorder'),
+      countClinic: el('countClinic'),
+      countHistory: el('countHistory'),
+      inventoryView: el('inventoryView'),
+      handoffView: el('handoffView'),
+      clinicView: el('clinicView'),
+      historyView: el('historyView'),
+      name: el('name'),
+      category: el('category'),
+      unit: el('unit'),
+      onHand: el('onHand'),
+      biweeklyNeed: el('biweeklyNeed'),
+      reorderPoint: el('reorderPoint'),
+      orderedQty: el('orderedQty'),
+      deliveryStatus: el('deliveryStatus'),
+      homeQty: el('homeQty'),
+      clinicQty: el('clinicQty'),
+      notes: el('notes')
     };
 
-    const state = load() || JSON.parse(JSON.stringify(seed));
-    const $ = id => document.getElementById(id);
-
-    const els = {
-      itemList: $('itemList'),
-      search: $('search'),
-      editorTitle: $('editorTitle'),
-      statusBadge: $('statusBadge'),
-      quickChecks: $('quickChecks'),
-      handoffList: $('handoffList'),
-      clinicList: $('clinicList'),
-      historyList: $('historyList'),
-      countItems: $('countItems'),
-      countReorder: $('countReorder'),
-      countUnits: $('countUnits'),
-      countHistory: $('countHistory'),
-      inventoryView: $('inventoryView'),
-      handoffView: $('handoffView'),
-      clinicView: $('clinicView'),
-      historyView: $('historyView'),
-      name: $('name'),
-      category: $('category'),
-      unit: $('unit'),
-      onHand: $('onHand'),
-      biweeklyNeed: $('biweeklyNeed'),
-      orderedQty: $('orderedQty'),
-      reorderPoint: $('reorderPoint'),
-      deliveryStatus: $('deliveryStatus'),
-      homeQty: $('homeQty'),
-      clinicQty: $('clinicQty'),
-      notes: $('notes')
-    };
-
-    function load() {
+    function loadState() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY));
       } catch (e) {
@@ -274,170 +195,319 @@
       }
     }
 
-    function persist() {
+    function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
-    function selected() {
-      return state.items.find(i => i.id === state.selectedId);
+    function selectedItem() {
+      return state.items.find(i => i.id === state.selectedId) || null;
     }
 
-    function makeId() {
-      return `PD-${Math.max(3000, ...state.items.map(i => Number((i.id.match(/(\\d+)/) || ['', 3000])[1]))) + 1}`;
-    }
-
-    function esc(s) {
-      return String(s ?? '').replace(/[&<>\"']/g, function(m) {
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>\"']/g, function(m) {
         return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[m];
       });
     }
 
-    function reorderQty(item) {
-      return Math.max(0, (item.biweeklyNeed || 0) - item.onHand - (item.orderedQty || 0));
+    function makeId() {
+      const nums = state.items.map(i => Number((i.id || '').replace(/\\D/g, '')) || 3000);
+      return 'PD-' + (Math.max(3000, ...nums) + 1);
     }
 
-    function needsReorder(item) {
-      return reorderQty(item) > 0 || item.onHand <= item.reorderPoint;
+    function reorderQty(item) {
+      return Math.max(0, Number(item.biweeklyNeed || 0) - Number(item.onHand || 0) - Number(item.orderedQty || 0));
     }
 
     function plannedList() {
-      return state.items
-        .filter(needsReorder)
-        .map(item => {
-          const total = Math.max(
-            reorderQty(item),
-            item.onHand <= item.reorderPoint ? Math.max(1, reorderQty(item)) : reorderQty(item)
-          );
+      return state.items.map(item => {
+        const total = reorderQty(item);
+        let planHome = Number(item.homeQty || 0);
+        let planClinic = Number(item.clinicQty || 0);
 
-          let planClinic = Number(item.clinicQty || 0);
-          let planHome = Number(item.homeQty || 0);
+        if (!planHome && !planClinic && total > 0) planHome = total;
 
-          if (!planHome && !planClinic) planHome = total;
+        if (planHome < 0) planHome = 0;
+        if (planClinic < 0) planClinic = 0;
+        if (planHome > total) planHome = total;
+        if (planClinic > total) planClinic = total;
 
-          const clamp = v => Math.max(0, Math.min(v, total));
-          planClinic = clamp(planClinic);
-          planHome = clamp(planHome);
-
-          if (!planHome && !planClinic && total > 0) planHome = total;
-
-          return { ...item, suggest: total, planHome, planClinic };
-        })
-        .filter(i => i.suggest > 0);
+        return Object.assign({}, item, {
+          suggest: total,
+          planHome: planHome,
+          planClinic: planClinic
+        });
+      }).filter(i => i.suggest > 0 || i.planClinic > 0);
     }
 
     function statusFor(item) {
-      if (item.onHand <= item.reorderPoint) return ['Order now', 'error'];
+      if (Number(item.onHand || 0) <= Number(item.reorderPoint || 0)) return ['Order now', 'danger'];
       if (reorderQty(item) > 0) return ['Plan order', 'warn'];
-      if (item.deliveryStatus === 'submitted in MyBaxter') return ['Submitted', 'success'];
-      return ['Stable', 'success'];
+      if (item.deliveryStatus === 'submitted in MyBaxter') return ['Submitted', 'ok'];
+      return ['Stable', 'ok'];
+    }
+
+    function renderTabs() {
+      document.querySelectorAll('.tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === state.activeTab);
+      });
+      refs.inventoryView.classList.toggle('hidden', state.activeTab !== 'inventory');
+      refs.handoffView.classList.toggle('hidden', state.activeTab !== 'handoff');
+      refs.clinicView.classList.toggle('hidden', state.activeTab !== 'clinic');
+      refs.historyView.classList.toggle('hidden', state.activeTab !== 'history');
     }
 
     function renderStats() {
       const plan = plannedList();
-      els.countItems.textContent = state.items.length;
-      els.countReorder.textContent = plan.length;
-      els.countUnits.textContent = plan.reduce((a, b) => a + b.suggest, 0);
-      els.countHistory.textContent = state.history.length;
-    }
-
-    function renderTabs() {
-      [...document.querySelectorAll('#tabs button')].forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === state.activeTab);
-      });
-      els.inventoryView.hidden = state.activeTab !== 'inventory';
-      els.handoffView.hidden = state.activeTab !== 'handoff';
-      els.clinicView.hidden = state.activeTab !== 'clinic';
-      els.historyView.hidden = state.activeTab !== 'history';
+      refs.countItems.textContent = state.items.length;
+      refs.countReorder.textContent = plan.filter(i => i.planHome > 0 || i.suggest > 0).length;
+      refs.countClinic.textContent = plan.filter(i => i.planClinic > 0).length;
+      refs.countHistory.textContent = state.history.length;
     }
 
     function renderList() {
-      const q = els.search.value.trim().toLowerCase();
+      const q = refs.search.value.trim().toLowerCase();
       const list = state.items.filter(i => [i.name, i.category, i.notes].join(' ').toLowerCase().includes(q));
 
       if (!list.length) {
-        els.itemList.innerHTML = '<div class=\"empty\">No supplies yet. Tap New to add your first item.</div>';
+        refs.itemList.innerHTML = '<div class=\"empty\">No supplies yet. Tap + New to add your first item.</div>';
         return;
       }
 
-      els.itemList.innerHTML = list.map(item => {
-        const [label, cls] = statusFor(item);
+      refs.itemList.innerHTML = list.map(item => {
+        const status = statusFor(item);
         return `
-          <button class=\"item ${item.id === state.selectedId ? 'active' : ''}\" data-id=\"${item.id}\">
-            <span class=\"row\">
+          <button class="item card ${item.id === state.selectedId ? 'active' : ''}" data-id="${item.id}">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
               <strong>${esc(item.name)}</strong>
-              <span class=\"badge ${cls}\">${label}</span>
-            </span>
-            <span class=\"tiny\">${esc(item.category)} · ${item.onHand} ${esc(item.unit)}</span>
-            <span class=\"tiny\">Bi-weekly target: ${item.biweeklyNeed} · Already ordered: ${item.orderedQty || 0}</span>
+              <span class="badge ${status[1]}">${status[0]}</span>
+            </div>
+            <div class="muted">${esc(item.category)} · ${esc(item.onHand)} ${esc(item.unit)}</div>
+            <div class="muted">Bi-weekly need ${esc(item.biweeklyNeed)} · Ordered ${esc(item.orderedQty)}</div>
           </button>
         `;
       }).join('');
 
-      [...els.itemList.querySelectorAll('.item')].forEach(btn => {
-        btn.addEventListener('click', () => {
-          state.selectedId = btn.dataset.id;
-          persist();
+      refs.itemList.querySelectorAll('[data-id]').forEach(btn => {
+        btn.addEventListener('click', function() {
+          state.selectedId = this.getAttribute('data-id');
+          saveState();
           render();
         });
       });
     }
 
     function renderEditor() {
-      const item = selected();
+      const item = selectedItem();
 
       if (!item) {
-        els.editorTitle.textContent = 'Supply item';
-        els.statusBadge.textContent = 'Stable';
-        els.statusBadge.className = 'badge';
-        ['name', 'unit', 'notes', 'homeQty', 'clinicQty'].forEach(k => els[k].value = '');
-        els.onHand.value = '';
-        els.biweeklyNeed.value = '';
-        els.orderedQty.value = '';
-        els.reorderPoint.value = '';
-        els.category.value = 'PD supplies';
-        els.deliveryStatus.value = 'not ordered';
-        els.quickChecks.innerHTML = '<div class=\"empty\">Select or create a supply item to see checks.</div>';
+        refs.editorTitle.textContent = 'Supply item';
+        refs.statusBadge.textContent = 'Stable';
+        refs.statusBadge.className = 'badge';
+        ['name','unit','notes','onHand','biweeklyNeed','reorderPoint','orderedQty','homeQty','clinicQty'].forEach(k => refs[k].value = '');
+        refs.category.value = 'PD supplies';
+        refs.deliveryStatus.value = 'not ordered';
+        refs.checks.innerHTML = '<div class=\"empty\">Select an item or tap + New.</div>';
         return;
       }
 
-      const [label, cls] = statusFor(item);
-      els.editorTitle.textContent = `${item.name} · ${item.id}`;
-      els.statusBadge.textContent = label;
-      els.statusBadge.className = `badge ${cls}`;
+      const status = statusFor(item);
+      refs.editorTitle.textContent = item.name + ' · ' + item.id;
+      refs.statusBadge.textContent = status[0];
+      refs.statusBadge.className = 'badge ' + status[1];
 
-      ['name','category','unit','onHand','biweeklyNeed','orderedQty','reorderPoint','deliveryStatus','notes','homeQty','clinicQty']
-        .forEach(k => { els[k].value = item[k] ?? ''; });
+      refs.name.value = item.name || '';
+      refs.category.value = item.category || 'PD supplies';
+      refs.unit.value = item.unit || '';
+      refs.onHand.value = item.onHand ?? '';
+      refs.biweeklyNeed.value = item.biweeklyNeed ?? '';
+      refs.reorderPoint.value = item.reorderPoint ?? '';
+      refs.orderedQty.value = item.orderedQty ?? '';
+      refs.deliveryStatus.value = item.deliveryStatus || 'not ordered';
+      refs.homeQty.value = item.homeQty ?? '';
+      refs.clinicQty.value = item.clinicQty ?? '';
+      refs.notes.value = item.notes || '';
 
-      const checks = [
-        ['Bi-weekly target covered', item.onHand + (item.orderedQty || 0) >= item.biweeklyNeed],
-        ['At or below reorder point', item.onHand <= item.reorderPoint],
-        ['Submitted in portal', item.deliveryStatus === 'submitted in MyBaxter'],
-        ['Needs planned reorder', needsReorder(item)]
-      ];
-
-      els.quickChecks.innerHTML = checks.map(([t, ok]) =>
-        `<div class=\"check\"><span>${t}</span><span class=\"badge ${ok ? 'warn' : 'success'}\">${ok ? 'Yes' : 'No'}</span></div>`
-      ).join('');
+      refs.checks.innerHTML = `
+        <div class="card">
+          <div class="muted">Bi-weekly target covered: ${Number(item.onHand || 0) + Number(item.orderedQty || 0) >= Number(item.biweeklyNeed || 0) ? 'Yes' : 'No'}</div>
+          <div class="muted">Needs reorder: ${reorderQty(item) > 0 ? 'Yes' : 'No'}</div>
+        </div>
+      `;
     }
 
     function renderHandoff() {
       const plan = plannedList().filter(i => i.planHome > 0);
-
       if (!plan.length) {
-        els.handoffList.innerHTML = '<div class=\"empty\">No planned home delivery needed right now.</div>';
+        refs.handoffList.innerHTML = '<div class=\"empty\">No planned home delivery right now.</div>';
         return;
       }
-
-      els.handoffList.innerHTML = plan.map(item => `
-        <article class=\"handoff-card\">
-          <div class=\"row\">
-            <strong>${esc(item.name)}</strong>
-            <span class=\"badge warn\">Home delivery: ${item.planHome} ${esc(item.unit)}</span>
-          </div>
-          <div class=\"tiny\">Total suggested this cycle ${item.suggest}, of which ${item.planHome} is planned through MyBaxter.</div>
-        </article>
+      refs.handoffList.innerHTML = plan.map(item => `
+        <div class="card">
+          <strong>${esc(item.name)}</strong>
+          <div class="muted">Home delivery: ${esc(item.planHome)} ${esc(item.unit)}</div>
+        </div>
       `).join('');
     }
 
     function renderClinic() {
-      const plan = 
+      const plan = plannedList().filter(i => i.planClinic > 0);
+      if (!plan.length) {
+        refs.clinicList.innerHTML = '<div class=\"empty\">No clinic pickup planned right now.</div>';
+        return;
+      }
+      refs.clinicList.innerHTML = plan.map(item => `
+        <div class="card">
+          <strong>${esc(item.name)}</strong>
+          <div class="muted">Clinic pickup: ${esc(item.planClinic)} ${esc(item.unit)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderHistory() {
+      if (!state.history.length) {
+        refs.historyList.innerHTML = '<div class=\"empty\">No order history yet.</div>';
+        return;
+      }
+      refs.historyList.innerHTML = state.history.slice().reverse().map(entry => `
+        <div class="card">
+          <strong>${new Date(entry.at).toLocaleString()}</strong>
+          <div class="muted">${entry.items.map(i => i.name + ': ' + i.qty + ' ' + i.unit).join(' • ')}</div>
+        </div>
+      `).join('');
+    }
+
+    function render() {
+      renderTabs();
+      renderStats();
+      renderList();
+      renderEditor();
+      renderHandoff();
+      renderClinic();
+      renderHistory();
+    }
+
+    function saveCurrent() {
+      const item = selectedItem();
+      if (!item) return;
+      item.name = refs.name.value.trim() || 'Untitled supply';
+      item.category = refs.category.value;
+      item.unit = refs.unit.value.trim() || 'units';
+      item.onHand = Number(refs.onHand.value || 0);
+      item.biweeklyNeed = Number(refs.biweeklyNeed.value || 0);
+      item.reorderPoint = Number(refs.reorderPoint.value || 0);
+      item.orderedQty = Number(refs.orderedQty.value || 0);
+      item.deliveryStatus = refs.deliveryStatus.value;
+      item.homeQty = Number(refs.homeQty.value || 0);
+      item.clinicQty = Number(refs.clinicQty.value || 0);
+      item.notes = refs.notes.value.trim();
+      saveState();
+      render();
+    }
+
+    function addNewItem() {
+      const id = makeId();
+      const item = {
+        id: id,
+        name: 'New supply',
+        category: 'PD supplies',
+        unit: 'boxes',
+        onHand: 0,
+        biweeklyNeed: 0,
+        reorderPoint: 0,
+        orderedQty: 0,
+        deliveryStatus: 'not ordered',
+        homeQty: 0,
+        clinicQty: 0,
+        notes: ''
+      };
+      state.items.unshift(item);
+      state.selectedId = id;
+      saveState();
+      render();
+    }
+
+    function duplicateCurrent() {
+      const item = selectedItem();
+      if (!item) return;
+      const copy = JSON.parse(JSON.stringify(item));
+      copy.id = makeId();
+      copy.name = item.name + ' copy';
+      state.items.unshift(copy);
+      state.selectedId = copy.id;
+      saveState();
+      render();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'pd-supply-track-v4-safe.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function copyHome() {
+      const plan = plannedList().filter(i => i.planHome > 0);
+      const text = plan.length ? plan.map(i => `${i.name}: ${i.planHome} ${i.unit}`).join('\\n') : 'No home delivery planned';
+      navigator.clipboard.writeText(text).catch(() => alert(text));
+    }
+
+    function copyClinic() {
+      const plan = plannedList().filter(i => i.planClinic > 0);
+      const text = plan.length ? plan.map(i => `${i.name}: ${i.planClinic} ${i.unit}`).join('\\n') : 'No clinic pickup planned';
+      navigator.clipboard.writeText(text).catch(() => alert(text));
+    }
+
+    function markSubmitted() {
+      const plan = plannedList().filter(i => i.planHome > 0);
+      if (!plan.length) return;
+      state.history.push({
+        at: new Date().toISOString(),
+        items: plan.map(i => ({name:i.name, qty:i.planHome, unit:i.unit}))
+      });
+      plan.forEach(p => {
+        const item = state.items.find(i => i.id === p.id);
+        if (item) {
+          item.orderedQty = Number(item.orderedQty || 0) + Number(p.planHome || 0);
+          item.deliveryStatus = 'submitted in MyBaxter';
+        }
+      });
+      saveState();
+      render();
+    }
+
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', function() {
+        state.activeTab = this.dataset.tab;
+        saveState();
+        render();
+      });
+    });
+
+    el('newBtn').addEventListener('click', addNewItem);
+    el('saveBtn').addEventListener('click', saveCurrent);
+    el('duplicateBtn').addEventListener('click', duplicateCurrent);
+    el('resetBtn').addEventListener('click', function() {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    });
+    el('exportBtn').addEventListener('click', exportData);
+    el('copyHomeBtn').addEventListener('click', copyHome);
+    el('copyClinicBtn').addEventListener('click', copyClinic);
+    el('markSubmittedBtn').addEventListener('click', markSubmitted);
+    el('clearHistoryBtn').addEventListener('click', function() {
+      state.history = [];
+      saveState();
+      render();
+    });
+    el('search').addEventListener('input', renderList);
+    el('themeBtn').addEventListener('click', function() {
+      const html = document.documentElement;
+      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    render();
+  </script>
+</body>
+</html>
