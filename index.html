@@ -204,11 +204,16 @@
     }
 
     function esc(v) {
-      return String(v ?? '').replace(/[&<>\"']/g, function(m) {
-        return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[m];
-      });
-    }
-
+  return String(v ?? '').replace(/[&<>"']/g, function(m) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[m];
+  });
+}
     function makeId() {
       const nums = state.items.map(i => Number((i.id || '').replace(/\\D/g, '')) || 3000);
       return 'PD-' + (Math.max(3000, ...nums) + 1);
