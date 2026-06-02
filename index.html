@@ -3,182 +3,477 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>PD Supplies</title>
+  <meta name="theme-color" content="#0f172a" />
+  <title>Dialysis Agent Companion</title>
   <style>
-    :root { --bg:#f6f7fb; --card:#ffffff; --text:#162033; --muted:#667085; --line:#e6e8ef; --blue:#2563eb; --blue2:#60a5fa; --green:#10b981; --orange:#f59e0b; --red:#ef4444; --shadow:0 10px 30px rgba(15,23,42,.08); }
-    [data-theme="dark"] { --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#94a3b8; --line:#243047; --shadow:0 10px 30px rgba(0,0,0,.3); }
-    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#eef2ff);color:var(--text)}
-    .wrap{max-width:1100px;margin:0 auto;padding:18px 14px 100px} .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-    h1{font-size:1.3rem;margin:0} .sub{color:var(--muted);margin:4px 0 0} .btn{border:0;border-radius:999px;padding:12px 16px;font-weight:700;cursor:pointer} .btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff} .btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--line)}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px} .card{grid-column:span 12;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--shadow)}
-    .card h2{margin:0 0 4px;font-size:1.05rem} .muted{color:var(--muted)} .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center} .field{display:flex;flex-direction:column;gap:8px;min-width:160px;flex:1} label{font-size:.86rem;color:var(--muted);font-weight:700}
-    input,textarea,select{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:16px;padding:12px 14px;font:inherit} textarea{min-height:110px;resize:vertical}
-    .pill{display:inline-flex;align-items:center;gap:8px;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:7px 12px;font-size:.85rem;font-weight:700} .tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#ecfeff;color:#0e7490;font-size:.8rem;font-weight:800}
-    .list{display:grid;gap:12px} .item{border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(255,255,255,.3)} .item-title{font-weight:800} .item-meta{color:var(--muted);font-size:.92rem;margin-top:4px}
-    .item-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}.chip.good{background:#ecfdf5;color:#065f46}.chip.warn{background:#fff7ed;color:#9a3412}.chip.bad{background:#fef2f2;color:#991b1b}
-    .nav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;width:min(1100px,calc(100% - 16px));background:rgba(255,255,255,.86);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(4,1fr);z-index:10;overflow:hidden}
-    .nav button{border:0;background:transparent;padding:14px 8px;color:var(--muted);font-weight:800;cursor:pointer}.nav button.active{color:var(--blue);background:rgba(37,99,235,.08)}
-    .hidden{display:none}.split{display:grid;grid-template-columns:repeat(2,1fr);gap:12px} @media (max-width:760px){.split{grid-template-columns:1fr}}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} .stat{border:1px solid var(--line);border-radius:18px;padding:12px;background:rgba(255,255,255,.45)} .stat strong{display:block;font-size:1.2rem} .stat span{color:var(--muted);font-size:.85rem}
-    .table{width:100%;border-collapse:collapse} .table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:.92rem} .table th{color:var(--muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
-    .small{font-size:.86rem;color:var(--muted)} .center{display:flex;align-items:center;justify-content:center}
+    :root {
+      --bg: #f4f7fb;
+      --surface: rgba(255,255,255,0.88);
+      --surface-2: #ffffff;
+      --text: #102033;
+      --muted: #64748b;
+      --line: #dbe4f0;
+      --primary: #0f766e;
+      --primary-2: #0b5f59;
+      --danger: #b42318;
+      --danger-soft: #fff1f1;
+      --warning: #9a6700;
+      --warning-soft: #fff8e6;
+      --success: #166534;
+      --success-soft: #eefbf2;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      --radius: 22px;
+      --radius-sm: 16px;
+      --tabbar-h: 88px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #08111f;
+      --surface: rgba(15,23,42,0.88);
+      --surface-2: #0f172a;
+      --text: #e5eef8;
+      --muted: #9db0c7;
+      --line: #223149;
+      --primary: #2dd4bf;
+      --primary-2: #14b8a6;
+      --danger: #ff7b7b;
+      --danger-soft: rgba(122, 24, 24, 0.3);
+      --warning: #fbbf24;
+      --warning-soft: rgba(120, 83, 7, 0.25);
+      --success: #4ade80;
+      --success-soft: rgba(22, 101, 52, 0.28);
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; background: radial-gradient(circle at top, rgba(45,212,191,0.14), transparent 28%), var(--bg); color: var(--text); }
+    body { min-height: 100vh; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: 0; }
+    .app { max-width: 860px; margin: 0 auto; min-height: 100vh; padding: env(safe-area-inset-top) 16px calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 20px); }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 10; padding: 12px 0 14px;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to bottom, rgba(244,247,251,0.90), rgba(244,247,251,0.60), transparent);
+    }
+    [data-theme="dark"] .topbar {
+      background: linear-gradient(to bottom, rgba(8,17,31,0.92), rgba(8,17,31,0.65), transparent);
+    }
+
+    .topbar-row { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:700; }
+    .title { font-size:28px; line-height:1.1; margin:0; font-weight:800; }
+    .subtitle { margin:6px 0 0; color:var(--muted); font-size:14px; max-width: 56ch; }
+    .actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .pill-btn {
+      border-radius: 999px; padding: 10px 14px; background: var(--surface);
+      color: var(--text); border: 1px solid var(--line); box-shadow: var(--shadow);
+      display:inline-flex; align-items:center; gap:8px; font-weight:700;
+    }
+    .pill-btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; border-color: transparent; }
+    .pill-btn.ghost { background: transparent; box-shadow: none; }
+
+    .banner {
+      background: linear-gradient(135deg, rgba(45,212,191,0.14), rgba(15,118,110,0.08));
+      border: 1px solid rgba(45,212,191,0.22);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin: 10px 0 16px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .banner strong { display:block; margin-bottom:4px; }
+    .banner p { margin:0; color:var(--muted); font-size:14px; }
+
+    .layout { display:grid; grid-template-columns: 1.5fr .9fr; gap: 16px; align-items:start; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+    .card .card-hd { padding: 16px 16px 0; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .card .card-bd { padding: 16px; }
+    .card-title { margin:0; font-size:17px; font-weight:800; }
+    .card-sub { color:var(--muted); font-size:13px; margin-top:4px; }
+
+    .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-top: 14px; }
+    .tab {
+      border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+      border-radius: 999px; padding: 10px 14px; font-weight:700;
+    }
+    .tab.active { background: rgba(45,212,191,0.14); border-color: rgba(45,212,191,0.35); color: var(--primary-2); }
+
+    .section { display:none; }
+    .section.active { display:block; }
+
+    .grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: var(--surface-2);
+    }
+    .item h4 { margin:0 0 6px; font-size: 15px; }
+    .meta { color:var(--muted); font-size:13px; line-height:1.45; }
+    .row { display:flex; gap: 10px; flex-wrap:wrap; }
+    .small { font-size:12px; color:var(--muted); }
+    .status {
+      display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px;
+      font-size:12px; font-weight:700;
+    }
+    .status.good { background: var(--success-soft); color: var(--success); }
+    .status.warn { background: var(--warning-soft); color: var(--warning); }
+    .status.bad { background: var(--danger-soft); color: var(--danger); }
+
+    .statbar { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 12px; }
+    .stat {
+      padding: 12px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-2);
+    }
+    .stat strong { display:block; font-size: 20px; }
+    .stat span { color: var(--muted); font-size:12px; }
+
+    .form { display:grid; gap: 12px; }
+    .field { display:grid; gap:6px; }
+    .field label { font-size:12px; font-weight:700; color:var(--muted); }
+    .field input, .field textarea, .field select {
+      border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px;
+      background: var(--surface-2); color: var(--text);
+    }
+    .field textarea { min-height: 100px; resize: vertical; }
+
+    .footer-tabs {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 10px; width: min(860px, calc(100% - 16px));
+      background: rgba(255,255,255,0.84);
+      border: 1px solid var(--line); border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display:grid; grid-template-columns: repeat(4,1fr);
+      overflow:hidden;
+      z-index: 20;
+    }
+    [data-theme="dark"] .footer-tabs { background: rgba(15,23,42,0.84); }
+    .footer-tabs button {
+      background: transparent;
+      padding: 12px 8px;
+      color: var(--muted);
+      font-weight: 800;
+      border: 0;
+    }
+    .footer-tabs button.active {
+      color: var(--primary-2);
+      background: rgba(45,212,191,0.12);
+    }
+
+    .hidden { display:none !important; }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .topbar-row { flex-direction:column; }
+      .actions { justify-content:flex-start; }
+      .statbar { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div>
-        <h1>PD Supplies</h1>
-        <div class="sub">Simple inventory for PD supplies, quick stock changes, and iPhone-friendly use.</div>
-      </div>
-      <div class="row">
-        <button class="btn btn-secondary" id="themeBtn">Theme</button>
-        <button class="btn btn-secondary" id="exportBtn">Export JSON</button>
-        <label class="btn btn-secondary" for="importFile" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">Import JSON</label>
-        <input id="importFile" type="file" accept="application/json" class="hidden" />
-      </div>
-    </div>
-
-    <section class="card">
-      <div class="row" style="justify-content:space-between;align-items:flex-start;">
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-row">
         <div>
-          <h2>Overview</h2>
-          <div class="muted">Track what you have before reorder day.</div>
+          <div class="eyebrow">Dialysis Agent</div>
+          <h1 class="title">Dialysis Agent Companion</h1>
+          <p class="subtitle">Track treatments, readings, supplies, notes, and exportable backups in one iPhone-friendly page.</p>
         </div>
-        <span class="tag">Local storage</span>
+        <div class="actions">
+          <button class="pill-btn" id="themeBtn" type="button">Theme</button>
+          <button class="pill-btn" id="exportBtn" type="button">Export JSON</button>
+          <label class="pill-btn primary" for="importFile">Import JSON</label>
+          <input id="importFile" type="file" accept="application/json" class="hidden" />
+        </div>
       </div>
-      <div class="stats" style="margin-top:14px;">
-        <div class="stat"><strong id="statTotal">0</strong><span>Total items</span></div>
-        <div class="stat"><strong id="statLow">0</strong><span>Need attention</span></div>
-        <div class="stat"><strong id="statOrdered">0</strong><span>Ordered</span></div>
-        <div class="stat"><strong id="statReceived">0</strong><span>Received</span></div>
-      </div>
-    </section>
 
-    <section id="inventoryView" class="card">
-      <div class="row" style="justify-content:space-between;align-items:flex-end;">
+      <div class="banner">
         <div>
-          <h2>Inventory</h2>
-          <div class="muted">Add supplies, adjust quantity, and mark order status.</div>
+          <strong>Built for quick daily use</strong>
+          <p>Use the tabs below for pre-treatment, post-treatment, supplies, and history.</p>
         </div>
-        <button class="btn btn-primary" id="addBtn">+ Add supply</button>
+        <span class="status good" id="saveState">Saved locally</span>
       </div>
-      <div class="list" id="inventoryList" style="margin-top:14px;"></div>
-    </section>
+    </header>
 
-    <section id="reorderView" class="card hidden">
-      <h2>Reorder plan</h2>
-      <div class="muted">Items with low stock or order flags appear here.</div>
-      <div id="reorderList" class="list" style="margin-top:14px;"></div>
-    </section>
+    <main class="layout">
+      <section class="card">
+        <div class="card-hd">
+          <div>
+            <h2 class="card-title">Dashboard</h2>
+            <div class="card-sub">A quick snapshot of your dialysis workflow.</div>
+          </div>
+          <span class="status good" id="dashCount">0 entries</span>
+        </div>
+        <div class="card-bd">
+          <div class="statbar">
+            <div class="stat"><strong id="statTreatments">0</strong><span>Treatments logged</span></div>
+            <div class="stat"><strong id="statSupplies">0</strong><span>Supply items</span></div>
+            <div class="stat"><strong id="statNotes">0</strong><span>Notes</span></div>
+          </div>
 
-    <section id="clinicView" class="card hidden">
-      <h2>Clinic pickup</h2>
-      <div class="muted">Items you want to pick up from the clinic.</div>
-      <div id="clinicList" class="list" style="margin-top:14px;"></div>
-    </section>
+          <div class="tabs">
+            <button class="tab active" data-tab="treatments">Treatments</button>
+            <button class="tab" data-tab="supplies">Supplies</button>
+            <button class="tab" data-tab="notes">Notes</button>
+            <button class="tab" data-tab="history">History</button>
+          </div>
 
-    <section id="historyView" class="card hidden">
-      <h2>History</h2>
-      <div class="muted">Recent changes are listed here.</div>
-      <div id="historyList" class="list" style="margin-top:14px;"></div>
-    </section>
+          <div id="treatments" class="section active" style="margin-top:16px;">
+            <div class="grid" id="treatmentList"></div>
+            <div class="row" style="margin-top:14px;">
+              <button class="pill-btn primary" id="addTreatmentBtn" type="button">+ Add treatment</button>
+            </div>
+          </div>
+
+          <div id="supplies" class="section" style="margin-top:16px;">
+            <div class="grid" id="supplyList"></div>
+            <div class="row" style="margin-top:14px;">
+              <button class="pill-btn primary" id="addSupplyBtn" type="button">+ Add supply</button>
+            </div>
+          </div>
+
+          <div id="notes" class="section" style="margin-top:16px;">
+            <div class="grid" id="noteList"></div>
+            <div class="row" style="margin-top:14px;">
+              <button class="pill-btn primary" id="addNoteBtn" type="button">+ Add note</button>
+            </div>
+          </div>
+
+          <div id="history" class="section" style="margin-top:16px;">
+            <div class="grid" id="historyList"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="card-hd">
+          <div>
+            <h2 class="card-title">Quick entry</h2>
+            <div class="card-sub">Fast logging for common fields.</div>
+          </div>
+        </div>
+        <div class="card-bd">
+          <form class="form" id="quickForm">
+            <div class="field">
+              <label for="quickType">Type</label>
+              <select id="quickType">
+                <option value="treatment">Treatment</option>
+                <option value="supply">Supply</option>
+                <option value="note">Note</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="quickTitle">Title</label>
+              <input id="quickTitle" placeholder="Example: Pre-treatment" />
+            </div>
+            <div class="field">
+              <label for="quickDetail">Details</label>
+              <textarea id="quickDetail" placeholder="Enter reading, amount, note, or anything important."></textarea>
+            </div>
+            <button class="pill-btn primary" type="submit">Save entry</button>
+          </form>
+        </div>
+      </aside>
+    </main>
   </div>
 
-  <nav class="nav">
-    <button data-tab="inventory" class="active">Inventory</button>
-    <button data-tab="reorder">Reorder</button>
-    <button data-tab="clinic">Clinic</button>
+  <nav class="footer-tabs">
+    <button class="active" data-tab="treatments">Treatments</button>
+    <button data-tab="supplies">Supplies</button>
+    <button data-tab="notes">Notes</button>
     <button data-tab="history">History</button>
   </nav>
 
-  <template id="itemTemplate">
-    <div class="item">
-      <div class="item-title"></div>
-      <div class="item-meta"></div>
-      <div class="item-actions"></div>
-    </div>
-  </template>
-
   <script>
-    const KEY = 'pd-supplies-v2';
-    const state = load() || { items: [], history: [], tab: 'inventory' };
+    const KEY = 'dialysis-agent-companion-v1';
     const $ = id => document.getElementById(id);
-    const escape = s => String(s ?? '').replace(/[&<>"]+/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-    function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-    function load(){ try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }
-    function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-    function n(v){ return Number(v) || 0; }
-    function log(text){ state.history.unshift({ text, at: new Date().toISOString() }); state.history = state.history.slice(0,40); }
-    function addItem(){
-      const name = prompt('Item name?'); if(!name) return;
-      const onHand = prompt('On hand amount?', '0');
-      state.items.unshift({ id: uid(), name, onHand: n(onHand), reorderPoint: 0, reserve: 0, homeQty: 0, clinicQty: 0, ordered:false, received:false, notes:'' });
-      log(`Added ${name}`); save(); render();
-    }
-    function updateItem(id, patch){ const item = state.items.find(x => x.id === id); if(!item) return; Object.assign(item, patch); save(); render(); }
-    function removeItem(id){ const i = state.items.findIndex(x => x.id === id); if(i < 0) return; const name = state.items[i].name; if(confirm(`Delete ${name}?`)){ state.items.splice(i,1); log(`Deleted ${name}`); save(); render(); } }
-    function setTab(tab){ state.tab = tab; save(); render(); }
-    function low(item){ return n(item.onHand) <= Math.max(n(item.reorderPoint), n(item.reserve)); }
-    function cardHTML(item){
-      const el = $('itemTemplate').content.firstElementChild.cloneNode(true);
-      el.querySelector('.item-title').textContent = item.name;
-      el.querySelector('.item-meta').innerHTML = `On hand: <strong>${n(item.onHand)}</strong> • Reorder: ${n(item.reorderPoint)} • Reserve: ${n(item.reserve)}${item.notes ? '<br><span class="small">' + escape(item.notes) + '</span>' : ''}`;
-      const actions = el.querySelector('.item-actions');
-      const b = (t, cls, fn) => { const x = document.createElement('button'); x.className = 'chip ' + (cls||''); x.textContent = t; x.onclick = fn; actions.appendChild(x); };
-      b('-5','',()=>updateItem(item.id,{onHand:n(item.onHand)-5})); b('-1','',()=>updateItem(item.id,{onHand:n(item.onHand)-1})); b('+1','',()=>updateItem(item.id,{onHand:n(item.onHand)+1})); b('+5','',()=>updateItem(item.id,{onHand:n(item.onHand)+5}));
-      b('Ordered', item.ordered ? 'warn' : '', ()=>updateItem(item.id,{ordered:!item.ordered}));
-      b('Received', item.received ? 'good' : '', ()=>updateItem(item.id,{received:!item.received}));
-      b('Edit','',()=>editItem(item)); b('Delete','bad',()=>removeItem(item.id));
-      return el;
-    }
-    function editItem(item){
-      const name = prompt('Item name', item.name); if(!name) return;
-      const onHand = prompt('On hand', item.onHand);
-      const reorderPoint = prompt('Reorder point', item.reorderPoint);
-      const reserve = prompt('Reserve', item.reserve);
-      const homeQty = prompt('Home qty', item.homeQty);
-      const clinicQty = prompt('Clinic qty', item.clinicQty);
-      const notes = prompt('Notes', item.notes || '');
-      updateItem(item.id, { name, onHand:n(onHand), reorderPoint:n(reorderPoint), reserve:n(reserve), homeQty:n(homeQty), clinicQty:n(clinicQty), notes: notes || '' });
-      log(`Updated ${name}`);
-    }
-    function render(){
-      $('statTotal').textContent = state.items.length;
-      $('statLow').textContent = state.items.filter(low).length;
-      $('statOrdered').textContent = state.items.filter(i=>i.ordered).length;
-      $('statReceived').textContent = state.items.filter(i=>i.received).length;
-      document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.tab === state.tab));
-      ['inventory','reorder','clinic','history'].forEach(tab => $(tab+'View').classList.toggle('hidden', state.tab !== tab));
-      $('inventoryList').innerHTML = ''; state.items.forEach(item => $('inventoryList').appendChild(cardHTML(item)));
-      $('reorderList').innerHTML = ''; state.items.filter(i => low(i) || i.ordered || i.received).forEach(item => $('reorderList').appendChild(cardHTML(item)));
-      $('clinicList').innerHTML = ''; state.items.filter(i => n(i.clinicQty) > 0).forEach(item => $('clinicList').appendChild(cardHTML(item)));
-      $('historyList').innerHTML = state.history.length ? state.history.map(h => `<div class="item"><div class="item-title">${escape(h.text)}</div><div class="item-meta">${new Date(h.at).toLocaleString()}</div></div>`).join('') : '<div class="item"><div class="item-title">No history yet</div><div class="item-meta">Changes will appear here.</div></div>';
-    }
-    $('addBtn').onclick = addItem;
-    $('themeBtn').onclick = () => { const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next; save(); };
-    $('exportBtn').onclick = () => {
-      const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pd-supplies-backup.json'; a.click(); URL.revokeObjectURL(a.href);
+    const state = load() || {
+      theme: 'light',
+      activeTab: 'treatments',
+      treatments: [],
+      supplies: [],
+      notes: [],
+      history: []
     };
-    $('importFile').onchange = async (e) => {
-      const file = e.target.files[0]; if(!file) return;
-      const text = await file.text();
-      const data = JSON.parse(text);
-      if (!data || !Array.isArray(data.items)) { alert('That file does not look like a backup.'); return; }
-      state.items = data.items || []; state.history = data.history || []; state.tab = data.tab || 'inventory'; save(); render(); alert('Imported.');
-    };
-    document.querySelectorAll('.nav button').forEach(btn => btn.onclick = () => setTab(btn.dataset.tab));
-    if (!load()) {
-      state.items = [];
-      state.history = [];
-      log('Started new inventory');
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; }
+    }
+
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      $('saveState').textContent = 'Saved locally';
+    }
+
+    function touch(msg) {
+      state.history.unshift({ at: new Date().toISOString(), text: msg });
+      state.history = state.history.slice(0, 30);
+      save();
+      render();
+    }
+
+    function setTheme(theme) {
+      state.theme = theme;
+      document.documentElement.dataset.theme = theme;
       save();
     }
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (!localStorage.getItem(KEY + ':theme')) document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
+
+    function fmtTime(iso) {
+      return new Date(iso).toLocaleString();
+    }
+
+    function entryCard(title, details, meta, status) {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <h4>${title}</h4>
+        <div class="meta">${details}</div>
+        <div class="row" style="margin-top:10px;justify-content:space-between;align-items:center;">
+          <span class="status ${status}">${meta}</span>
+        </div>
+      `;
+      return div;
+    }
+
+    function render() {
+      document.documentElement.dataset.theme = state.theme || 'light';
+
+      $('statTreatments').textContent = state.treatments.length;
+      $('statSupplies').textContent = state.supplies.length;
+      $('statNotes').textContent = state.notes.length;
+      $('dashCount').textContent = `${state.history.length} entries`;
+
+      document.querySelectorAll('.tab, .footer-tabs button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === state.activeTab);
+      });
+
+      document.querySelectorAll('.section').forEach(sec => {
+        sec.classList.toggle('active', sec.id === state.activeTab);
+      });
+
+      $('treatmentList').innerHTML = '';
+      state.treatments.slice().reverse().forEach((item, idx) => {
+        const card = entryCard(item.title, item.detail || 'No details.', fmtTime(item.at), 'good');
+        $('treatmentList').appendChild(card);
+      });
+      if (!state.treatments.length) $('treatmentList').innerHTML = '<div class="small">No treatments logged yet.</div>';
+
+      $('supplyList').innerHTML = '';
+      state.supplies.slice().reverse().forEach(item => {
+        const card = entryCard(item.title, item.detail || 'No details.', fmtTime(item.at), 'warn');
+        $('supplyList').appendChild(card);
+      });
+      if (!state.supplies.length) $('supplyList').innerHTML = '<div class="small">No supplies logged yet.</div>';
+
+      $('noteList').innerHTML = '';
+      state.notes.slice().reverse().forEach(item => {
+        const card = entryCard(item.title, item.detail || 'No details.', fmtTime(item.at), 'bad');
+        $('noteList').appendChild(card);
+      });
+      if (!state.notes.length) $('noteList').innerHTML = '<div class="small">No notes yet.</div>';
+
+      $('historyList').innerHTML = '';
+      state.history.slice().reverse().forEach(item => {
+        const card = entryCard(item.text, '', fmtTime(item.at), 'good');
+        $('historyList').appendChild(card);
+      });
+      if (!state.history.length) $('historyList').innerHTML = '<div class="small">No history yet.</div>';
+    }
+
+    function addEntry(type, title, detail) {
+      const item = { title, detail, at: new Date().toISOString() };
+      if (type === 'treatment') state.treatments.push(item);
+      if (type === 'supply') state.supplies.push(item);
+      if (type === 'note') state.notes.push(item);
+      touch(`Added ${type}: ${title}`);
+    }
+
+    document.querySelectorAll('.tab, .footer-tabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.activeTab = btn.dataset.tab;
+        save();
+        render();
+      });
+    });
+
+    $('themeBtn').addEventListener('click', () => {
+      setTheme((state.theme || 'light') === 'light' ? 'dark' : 'light');
+      render();
+    });
+
+    $('addTreatmentBtn').addEventListener('click', () => {
+      const title = prompt('Treatment title?');
+      if (!title) return;
+      const detail = prompt('Details?', '');
+      addEntry('treatment', title, detail || '');
+    });
+
+    $('addSupplyBtn').addEventListener('click', () => {
+      const title = prompt('Supply title?');
+      if (!title) return;
+      const detail = prompt('Details?', '');
+      addEntry('supply', title, detail || '');
+    });
+
+    $('addNoteBtn').addEventListener('click', () => {
+      const title = prompt('Note title?');
+      if (!title) return;
+      const detail = prompt('Note details?', '');
+      addEntry('note', title, detail || '');
+    });
+
+    $('quickForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const type = $('quickType').value;
+      const title = $('quickTitle').value.trim();
+      const detail = $('quickDetail').value.trim();
+      if (!title) return;
+      addEntry(type, title, detail);
+      $('quickTitle').value = '';
+      $('quickDetail').value = '';
+    });
+
+    $('exportBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dialysis-agent-companion.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $('importFile').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        if (!data || typeof data !== 'object') throw new Error('Invalid file');
+        state.theme = data.theme || 'light';
+        state.activeTab = data.activeTab || 'treatments';
+        state.treatments = Array.isArray(data.treatments) ? data.treatments : [];
+        state.supplies = Array.isArray(data.supplies) ? data.supplies : [];
+        state.notes = Array.isArray(data.notes) ? data.notes : [];
+        state.history = Array.isArray(data.history) ? data.history : [];
+        save();
+        render();
+      } catch {
+        alert('That file could not be imported.');
+      }
+    });
+
+    setTheme(state.theme || 'light');
     render();
   </script>
 </body>
