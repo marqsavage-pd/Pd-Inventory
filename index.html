@@ -80,12 +80,19 @@
     .btn-secondary { background:var(--surface-2); color:var(--text); border:1px solid var(--line); }
     .btn-danger { background:var(--danger-soft); color:var(--danger); border:1px solid color-mix(in srgb, var(--danger) 24%, var(--line)); }
     .btn.small { min-height:38px; padding:0 12px; border-radius:12px; font-size:0.9rem; }
+    .btn.block { width:100%; }
     .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
     .field { display:grid; gap:6px; }
     .field label { font-size:0.82rem; color:var(--muted); font-weight:700; }
     .input, select, textarea { width:100%; border:1px solid var(--line); background:var(--surface-2); color:var(--text); border-radius:14px; padding:13px 14px; min-height:46px; outline:none; }
     textarea { min-height:96px; resize:vertical; }
-    .tag { display:inline-flex; align-items:center; min-height:28px; padding:0 10px; border-radius:999px; font-size:0.76rem; font-weight:800; letter-spacing:0.03em; background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); color:var(--primary); }
+    .pill-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .pill { min-height:38px; padding:0 12px; border-radius:999px; border:1px solid var(--line); background:var(--surface-2); color:var(--text); }
+    .pill.active { background: color-mix(in srgb, var(--primary) 18%, var(--surface-2)); border-color: color-mix(in srgb, var(--primary) 42%, var(--line)); color:var(--primary); }
+    .alert { padding:12px 14px; border-radius:18px; background:var(--warning-soft); color:var(--warning); border:1px solid color-mix(in srgb, var(--warning) 22%, var(--line)); font-size:0.92rem; }
+    .alert.danger { background:var(--danger-soft); color:var(--danger); border-color:color-mix(in srgb, var(--danger) 22%, var(--line)); }
+    .alert.success { background:var(--success-soft); color:var(--success); border-color:color-mix(in srgb, var(--success) 22%, var(--line)); }
     .list { display:grid; gap:10px; }
     .item { border:1px solid var(--line); border-radius:18px; background:var(--surface-2); padding:14px; }
     .item-title { font-weight:800; margin:0 0 4px; }
@@ -94,6 +101,7 @@
     .adjust-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:10px; }
     .history-entry { padding:12px 0; border-bottom:1px solid var(--line); }
     .history-entry:last-child { border-bottom:0; }
+    .tag { display:inline-flex; align-items:center; min-height:28px; padding:0 10px; border-radius:999px; font-size:0.76rem; font-weight:800; letter-spacing:0.03em; background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); color:var(--primary); }
     .tabbar-wrap { position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:center; z-index:20; pointer-events:none; padding:10px 14px calc(env(safe-area-inset-bottom) + 10px); }
     .tabbar { pointer-events:auto; width:min(92vw, 760px); display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; padding:10px; border-radius:28px; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border:1px solid var(--line); box-shadow:var(--shadow); }
     .tab { min-height:60px; border-radius:18px; background:transparent; color:var(--muted); display:grid; place-items:center; gap:2px; padding:6px; font-size:0.74rem; font-weight:700; }
@@ -101,15 +109,7 @@
     .tab.active { color:var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); }
     .empty { color:var(--muted); text-align:center; padding:18px 10px; }
     .hidden { display:none !important; }
-    @media (max-width:640px) {
-      .status-row { grid-template-columns:1fr; }
-      .grid-2 { grid-template-columns:1fr; }
-      .topbar-inner { align-items:flex-start; }
-      .brand { align-items:flex-start; }
-      .adjust-grid { grid-template-columns:repeat(2,1fr); }
-      .tab { min-height:58px; }
-      .tab .label { font-size:0.68rem; }
-    }
+    @media (max-width:640px) { .status-row, .grid-3 { grid-template-columns:1fr; } .grid-2 { grid-template-columns:1fr; } .topbar-inner { align-items:flex-start; } .brand { align-items:flex-start; } .adjust-grid { grid-template-columns:repeat(2,1fr); } .tab { min-height:58px; } .tab .label { font-size:0.68rem; } }
   </style>
 </head>
 <body>
@@ -212,132 +212,55 @@
     </main>
   </div>
 
-    <nav class="tabbar" aria-label="Main navigation" id="tabbar">
+  <nav class="tabbar" aria-label="Main navigation" id="tabbar">
     <button class="tab active" data-tab="home" type="button"><div class="ico">⌂</div><div class="label">Home</div></button>
     <button class="tab" data-tab="treatments" type="button"><div class="ico">▣</div><div class="label">Treatments</div></button>
     <button class="tab" data-tab="inventory" type="button"><div class="ico">◫</div><div class="label">Inventory</div></button>
     <button class="tab" data-tab="notes" type="button"><div class="ico">✎</div><div class="label">Notes</div></button>
     <button class="tab" data-tab="history" type="button"><div class="ico">≡</div><div class="label">History</div></button>
   </nav>
-  
+## Part 2
+
+Paste this immediately after Part 1.
+
+```html
   <script>
     const KEY = 'dialysis-agent-companion-v2';
     const $ = id => document.getElementById(id);
     const state = load() || { theme:'light', tab:'home', treatments:[], inventory:[], notes:[], history:[] };
-
     function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
     function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
     function log(text){ state.history.unshift({ at:new Date().toISOString(), text }); state.history = state.history.filter(h => h && h.at && h.text); state.history = state.history.slice(0,50); save(); }
     function setTheme(theme){ state.theme = theme; document.documentElement.dataset.theme = theme; save(); }
-    function setTab(tab){ state.tab = tab; save(); render(); }
+    function setTab(tab){ state.tab = tab; save(); renderViews(); renderCounts(); renderLists(); highlightTabs(); }
     function fmt(iso){ return new Date(iso).toLocaleString(); }
     function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
     function n(v){ return Number(v) || 0; }
     function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
-
-    function renderCounts(){
-      $('countTreatments').textContent = state.treatments.length;
-      $('countItems').textContent = state.inventory.length;
-      $('countNotes').textContent = state.notes.length;
-    }
-
-    function renderViews(){
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      const map={home:$('homeView'), treatments:$('treatmentsView'), inventory:$('inventoryView'), notes:$('notesView'), history:$('historyView')};
-      (map[state.tab] || map.home).classList.add('active');
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab));
-    }
-
-    function treatmentEntry(item){
-      const div=document.createElement('div');
-      div.className='item';
-      div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`;
-      return div;
-    }
-
-    function inventoryEntry(item){
-      const low = n(item.qty) <= n(item.reorderPoint || 0);
-      const div=document.createElement('div');
-      div.className='item';
-      div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Item')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div class="meta">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn small btn-secondary" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn small btn-secondary" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn small btn-secondary" data-adjust="1" data-id="${item.id}">+1</button><button class="btn small btn-secondary" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-order="${item.id}">${item.ordered ? 'Unmark ordered' : 'Mark ordered'}</button><button class="btn small btn-secondary" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="inventory" data-id="${item.id}">Delete</button></div>`;
-      return div;
-    }
-
-    function noteEntry(item){
-      const div=document.createElement('div');
-      div.className='item';
-      div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Note')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="note" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="note" data-id="${item.id}">Delete</button></div>`;
-      return div;
-    }
-
-    function historyEntry(item){
-      const div=document.createElement('div');
-      div.className='history-entry';
-      const text = item && typeof item.text === 'string' ? item.text : '';
-      const at = item && item.at ? new Date(item.at) : null;
-      const when = at && !isNaN(at.getTime()) ? at.toLocaleString() : '';
-      div.innerHTML=`${when ? `<div class="meta">${when}</div>` : ''}<div>${escapeHtml(text)}</div>`;
-      return div;
-    }
-
-    function addTreatment(){
-      const title=prompt('Treatment title?'); if(!title) return;
-      const detail=prompt('Details?','') || '';
-      state.treatments.unshift({id:uid(), title, detail, at:new Date().toISOString()});
-      log(`Added treatment: ${title}`);
-      render();
-    }
-
-    function addInventoryItem(){
-      const title=prompt('Item name?'); if(!title) return;
-      const detail=prompt('Details?','') || '';
-      const qty=prompt('Quantity?','0');
-      const reorderPoint=prompt('Reorder point?','0');
-      state.inventory.unshift({id:uid(), title, detail, qty:n(qty), reorderPoint:n(reorderPoint), ordered:false, at:new Date().toISOString()});
-      log(`Added inventory item: ${title}`);
-      render();
-    }
-
-    function addNote(){
-      const title=prompt('Note title?'); if(!title) return;
-      const detail=prompt('Note text?','') || '';
-      state.notes.unshift({id:uid(), title, detail, at:new Date().toISOString()});
-      log(`Added note: ${title}`);
-      render();
-    }
-
-    function editByType(type, itemId){
-      const key = type === 'inventory' ? 'inventory' : type + 's';
-      const item = state[key].find(x => x.id === itemId);
-      if (!item) return;
-      const title = prompt('Title', item.title || '');
-      if (title === null) return;
-      const detail = prompt('Details', item.detail || '') || '';
-      item.title = title;
-      item.detail = detail;
-      if (type === 'inventory') {
-        item.qty = n(prompt('Quantity', item.qty ?? 0));
-        item.reorderPoint = n(prompt('Reorder point', item.reorderPoint ?? 0));
-      }
-      item.at = new Date().toISOString();
-      log(`Edited ${type}: ${title}`);
-      render();
-    }
-
-    function deleteByType(type, itemId){
-      const key = type === 'inventory' ? 'inventory' : type + 's';
-      const list = state[key];
-      const idx = list.findIndex(x => x.id === itemId);
-      if (idx < 0) return;
-      const name = list[idx].title || type;
-      if (!confirm(`Delete ${name}?`)) return;
-      list.splice(idx,1);
-      log(`Deleted ${type}: ${name}`);
-      render();
-    }
-
+    function renderCounts(){ $('countTreatments').textContent = state.treatments.length; $('countItems').textContent = state.inventory.length; $('countNotes').textContent = state.notes.length; }
+    function renderViews(){ document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); const map={home:$('homeView'), treatments:$('treatmentsView'), inventory:$('inventoryView'), notes:$('notesView'), history:$('historyView')}; (map[state.tab] || map.home).classList.add('active'); document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab)); }
+    function treatmentEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`; return div; }
+    function inventoryEntry(item){ const low = n(item.qty) <= n(item.reorderPoint || 0); const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Item')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div class="meta">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn small btn-secondary" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn small btn-secondary" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn small btn-secondary" data-adjust="1" data-id="${item.id}">+1</button><button class="btn small btn-secondary" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-order="${item.id}">${item.ordered ? 'Unmark ordered' : 'Mark ordered'}</button><button class="btn small btn-secondary" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="inventory" data-id="${item.id}">Delete</button></div>`; return div; }
+    function noteEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Note')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="note" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="note" data-id="${item.id}">Delete</button></div>`; return div; }
+    function historyEntry(item){ const div=document.createElement('div'); div.className='history-entry'; div.innerHTML=`<div class="meta">${fmt(item.at)}</div><div>${escapeHtml(item.text)}</div>`; return div; }
+    function addTreatment(){ const title=prompt('Treatment title?'); if(!title) return; const detail=prompt('Details?','') || ''; state.treatments.unshift({id:uid(), title, detail, at:new Date().toISOString()}); log(`Added treatment: ${title}`); }
+    function addInventoryItem(){ const title=prompt('Item name?'); if(!title) return; const detail=prompt('Details?','') || ''; const qty=prompt('Quantity?','0'); const reorderPoint=prompt('Reorder point?','0'); state.inventory.unshift({id:uid(), title, detail, qty:n(qty), reorderPoint:n(reorderPoint), ordered:false, at:new Date().toISOString()}); log(`Added inventory item: ${title}`); }
+    function addNote(){ const title=prompt('Note title?'); if(!title) return; const detail=prompt('Note text?','') || ''; state.notes.unshift({id:uid(), title, detail, at:new Date().toISOString()}); log(`Added note: ${title}`); }
+    function editByType(type, itemId){ const key = type === 'inventory' ? 'inventory' : type + 's'; const item = state[key].find(x => x.id === itemId); if (!item) return; const title = prompt('Title', item.title || ''); if (title === null) return; const detail = prompt('Details', item.detail || '') || ''; item.title = title; item.detail = detail; if (type === 'inventory') { item.qty = n(prompt('Quantity', item.qty ?? 0)); item.reorderPoint = n(prompt('Reorder point', item.reorderPoint ?? 0)); } item.at = new Date().toISOString(); log(`Edited ${type}: ${title}`); }
+    function deleteByType(type, itemId){ const key = type === 'inventory' ? 'inventory' : type + 's'; const list = state[key]; const idx = list.findIndex(x => x.id === itemId); if (idx < 0) return; const name = list[idx].title || type; if (!confirm(`Delete ${name}?`)) return; list.splice(idx,1); log(`Deleted ${type}: ${name}`); }
+    function renderLists(){ $('treatmentsList').innerHTML=''; if (!state.treatments.length) $('treatmentsList').innerHTML='<div class="empty">No treatments logged yet.</div>'; state.treatments.forEach(item => $('treatmentsList').appendChild(treatmentEntry(item))); $('inventoryList').innerHTML=''; if (!state.inventory.length) $('inventoryList').innerHTML='<div class="empty">No inventory items yet.</div>'; state.inventory.forEach(item => $('inventoryList').appendChild(inventoryEntry(item))); $('notesList').innerHTML=''; if (!state.notes.length) $('notesList').innerHTML='<div class="empty">No notes yet.</div>'; state.notes.forEach(item => $('notesList').appendChild(noteEntry(item))); $('historyList').innerHTML=''; if (!state.history.length) $('historyList').innerHTML='<div class="empty">No history yet.</div>'; state.history.forEach(item => $('historyList').appendChild(historyEntry(item))); }
+    function highlightTabs(){ document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab)); }
+    function render(){ document.documentElement.dataset.theme = state.theme || 'light'; renderCounts(); renderViews(); highlightTabs(); renderLists(); save(); }
+    document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); setTab(btn.dataset.tab); }));
+    $('themeToggle').addEventListener('click', () => setTheme((state.theme || 'light') === 'light' ? 'dark' : 'light'));
+    $('addTreatmentBtn').addEventListener('click', addTreatment);
+    $('addItemBtn').addEventListener('click', addInventoryItem);
+    $('addNoteBtn').addEventListener('click', addNote);
+    document.querySelectorAll('[data-quick]').forEach(btn => btn.addEventListener('click', () => { const t=btn.dataset.quick; if (t === 'treatment') addTreatment(); if (t === 'inventory') addInventoryItem(); if (t === 'note') addNote(); }));
+    document.body.addEventListener('click', (e) => { const tabBtn = e.target.closest('[data-tab]'); if (tabBtn) { e.preventDefault(); setTab(tabBtn.dataset.tab); return; } const edit=e.target.closest('[data-edit]'); const del=e.target.closest('[data-del]'); const adjust=e.target.closest('[data-adjust]'); const order=e.target.closest('[data-order]'); if (edit) { editByType(edit.dataset.edit, edit.dataset.id); render(); } if (del) { deleteByType(del.dataset.del, del.dataset.id); render(); } if (adjust) { const item=state.inventory.find(x => x.id === adjust.dataset.id); if (!item) return; item.qty = n(item.qty) + n(adjust.dataset.adjust); log(`Adjusted ${item.title}: ${adjust.dataset.adjust}`); render(); } if (order) { const item=state.inventory.find(x => x.id === order.dataset.id); if (!item) return; item.ordered = !item.ordered; log(`${item.ordered ? 'Marked' : 'Unmarked'} ordered: ${item.title}`); render(); } });
+    $('exportBtn').addEventListener('click', () => { const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dialysis-agent-companion.json'; a.click(); URL.revokeObjectURL(a.href); });
     function normalizeImportedData(data){
-      const out = { theme: data.theme || 'light', tab: data.tab || data.activeTab || 'home', treatments: [], inventory: [], notes: [], history: Array.isArray(data.history) ? data.history.filter(h => h && h.at && h.text) : [] };
+      const out = { theme: data.theme || 'light', tab: data.tab || data.activeTab || 'home', treatments: [], inventory: [], notes: [], history: Array.isArray(data.history) ? data.history : [] };
       if (Array.isArray(data.treatments)) out.treatments = data.treatments;
       if (Array.isArray(data.notes)) out.notes = data.notes;
       if (Array.isArray(data.inventory)) {
@@ -355,7 +278,6 @@
       }
       return out;
     }
-
     async function importFromFile(file){
       if (!file) return;
       try {
@@ -367,7 +289,7 @@
         state.treatments = imported.treatments;
         state.inventory = imported.inventory;
         state.notes = imported.notes;
-        state.history = imported.history;
+        state.history = Array.isArray(imported.history) ? imported.history.filter(h => h && h.at && h.text) : [];
         state.history = state.history.filter(h => h && h.at && h.text);
         log(`Imported backup: ${file.name}`);
         state.history = state.history.filter(h => h && h.at && h.text);
@@ -377,81 +299,86 @@
         alert('That file could not be imported.');
       }
     }
-
-    function render(){
-      document.documentElement.dataset.theme = state.theme || 'light';
-      renderCounts();
-      renderViews();
-
-      $('treatmentsList').innerHTML='';
-      if (!state.treatments.length) $('treatmentsList').innerHTML='<div class="empty">No treatments logged yet.</div>';
-      state.treatments.forEach(item => $('treatmentsList').appendChild(treatmentEntry(item)));
-
-      $('inventoryList').innerHTML='';
-      if (!state.inventory.length) $('inventoryList').innerHTML='<div class="empty">No inventory items yet.</div>';
-      state.inventory.forEach(item => $('inventoryList').appendChild(inventoryEntry(item)));
-
-      $('notesList').innerHTML='';
-      if (!state.notes.length) $('notesList').innerHTML='<div class="empty">No notes yet.</div>';
-      state.notes.forEach(item => $('notesList').appendChild(noteEntry(item)));
-
-      $('historyList').innerHTML='';
-      if (!state.history.length) $('historyList').innerHTML='<div class="empty">No history yet.</div>';
-      state.history.forEach(item => $('historyList').appendChild(historyEntry(item)));
-
-      save();
-    }
-
-    document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => setTab(btn.dataset.tab)));
+    $('importFile').addEventListener('change', async (e) => { const file = e.target.files[0]; await importFromFile(file); e.target.value = ''; });
+    setTheme(state.theme || 'light');
+    setTab(state.tab || 'home');
+    render();  <script>
+    const KEY = 'dialysis-agent-companion-v2';
+    const $ = id => document.getElementById(id);
+    const state = load() || { theme:'light', tab:'home', treatments:[], inventory:[], notes:[], history:[] };
+    function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
+    function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+    function log(text){ state.history.unshift({ at:new Date().toISOString(), text }); state.history = state.history.filter(h => h && h.at && h.text); state.history = state.history.slice(0,50); save(); }
+    function setTheme(theme){ state.theme = theme; document.documentElement.dataset.theme = theme; save(); }
+    function setTab(tab){ state.tab = tab; save(); renderViews(); renderCounts(); renderLists(); highlightTabs(); }
+    function fmt(iso){ return new Date(iso).toLocaleString(); }
+    function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+    function n(v){ return Number(v) || 0; }
+    function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+    function renderCounts(){ $('countTreatments').textContent = state.treatments.length; $('countItems').textContent = state.inventory.length; $('countNotes').textContent = state.notes.length; }
+    function renderViews(){ document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); const map={home:$('homeView'), treatments:$('treatmentsView'), inventory:$('inventoryView'), notes:$('notesView'), history:$('historyView')}; (map[state.tab] || map.home).classList.add('active'); document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab)); }
+    function treatmentEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`; return div; }
+    function inventoryEntry(item){ const low = n(item.qty) <= n(item.reorderPoint || 0); const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Item')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div class="meta">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn small btn-secondary" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn small btn-secondary" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn small btn-secondary" data-adjust="1" data-id="${item.id}">+1</button><button class="btn small btn-secondary" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-order="${item.id}">${item.ordered ? 'Unmark ordered' : 'Mark ordered'}</button><button class="btn small btn-secondary" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="inventory" data-id="${item.id}">Delete</button></div>`; return div; }
+    function noteEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Note')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="note" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="note" data-id="${item.id}">Delete</button></div>`; return div; }
+    function historyEntry(item){ const div=document.createElement('div'); div.className='history-entry'; div.innerHTML=`<div class="meta">${fmt(item.at)}</div><div>${escapeHtml(item.text)}</div>`; return div; }
+    function addTreatment(){ const title=prompt('Treatment title?'); if(!title) return; const detail=prompt('Details?','') || ''; state.treatments.unshift({id:uid(), title, detail, at:new Date().toISOString()}); log(`Added treatment: ${title}`); }
+    function addInventoryItem(){ const title=prompt('Item name?'); if(!title) return; const detail=prompt('Details?','') || ''; const qty=prompt('Quantity?','0'); const reorderPoint=prompt('Reorder point?','0'); state.inventory.unshift({id:uid(), title, detail, qty:n(qty), reorderPoint:n(reorderPoint), ordered:false, at:new Date().toISOString()}); log(`Added inventory item: ${title}`); }
+    function addNote(){ const title=prompt('Note title?'); if(!title) return; const detail=prompt('Note text?','') || ''; state.notes.unshift({id:uid(), title, detail, at:new Date().toISOString()}); log(`Added note: ${title}`); }
+    function editByType(type, itemId){ const key = type === 'inventory' ? 'inventory' : type + 's'; const item = state[key].find(x => x.id === itemId); if (!item) return; const title = prompt('Title', item.title || ''); if (title === null) return; const detail = prompt('Details', item.detail || '') || ''; item.title = title; item.detail = detail; if (type === 'inventory') { item.qty = n(prompt('Quantity', item.qty ?? 0)); item.reorderPoint = n(prompt('Reorder point', item.reorderPoint ?? 0)); } item.at = new Date().toISOString(); log(`Edited ${type}: ${title}`); }
+    function deleteByType(type, itemId){ const key = type === 'inventory' ? 'inventory' : type + 's'; const list = state[key]; const idx = list.findIndex(x => x.id === itemId); if (idx < 0) return; const name = list[idx].title || type; if (!confirm(`Delete ${name}?`)) return; list.splice(idx,1); log(`Deleted ${type}: ${name}`); }
+    function render(){ document.documentElement.dataset.theme = state.theme || 'light'; renderCounts(); renderViews(); $('treatmentsList').innerHTML=''; if (!state.treatments.length) $('treatmentsList').innerHTML='<div class="empty">No treatments logged yet.</div>'; state.treatments.forEach(item => $('treatmentsList').appendChild(treatmentEntry(item))); $('inventoryList').innerHTML=''; if (!state.inventory.length) $('inventoryList').innerHTML='<div class="empty">No inventory items yet.</div>'; state.inventory.forEach(item => $('inventoryList').appendChild(inventoryEntry(item))); $('notesList').innerHTML=''; if (!state.notes.length) $('notesList').innerHTML='<div class="empty">No notes yet.</div>'; state.notes.forEach(item => $('notesList').appendChild(noteEntry(item))); $('historyList').innerHTML=''; if (!state.history.length) $('historyList').innerHTML='<div class="empty">No history yet.</div>'; state.history.forEach(item => $('historyList').appendChild(historyEntry(item))); save(); }
+    document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => { setTab(btn.dataset.tab); }));
     $('themeToggle').addEventListener('click', () => setTheme((state.theme || 'light') === 'light' ? 'dark' : 'light'));
     $('addTreatmentBtn').addEventListener('click', addTreatment);
     $('addItemBtn').addEventListener('click', addInventoryItem);
     $('addNoteBtn').addEventListener('click', addNote);
-    document.querySelectorAll('[data-quick]').forEach(btn => btn.addEventListener('click', () => {
-      const t=btn.dataset.quick;
-      if (t === 'treatment') addTreatment();
-      if (t === 'inventory') addInventoryItem();
-      if (t === 'note') addNote();
-    }));
-    document.body.addEventListener('click', (e) => {
-      const edit=e.target.closest('[data-edit]');
-      const del=e.target.closest('[data-del]');
-      const adjust=e.target.closest('[data-adjust]');
-      const order=e.target.closest('[data-order]');
-      if (edit) editByType(edit.dataset.edit, edit.dataset.id);
-      if (del) deleteByType(del.dataset.del, del.dataset.id);
-      if (adjust) {
-        const item=state.inventory.find(x => x.id === adjust.dataset.id);
-        if (!item) return;
-        item.qty = n(item.qty) + n(adjust.dataset.adjust);
-        log(`Adjusted ${item.title}: ${adjust.dataset.adjust}`);
-        render();
+    document.querySelectorAll('[data-quick]').forEach(btn => btn.addEventListener('click', () => { const t=btn.dataset.quick; if (t === 'treatment') addTreatment(); if (t === 'inventory') addInventoryItem(); if (t === 'note') addNote(); }));
+    document.body.addEventListener('click', (e) => { const tabBtn = e.target.closest('[data-tab]'); if (tabBtn) { e.preventDefault(); setTab(tabBtn.dataset.tab); return; } const edit=e.target.closest('[data-edit]'); const del=e.target.closest('[data-del]'); const adjust=e.target.closest('[data-adjust]'); const order=e.target.closest('[data-order]'); if (edit) { editByType(edit.dataset.edit, edit.dataset.id); render(); } if (del) { deleteByType(del.dataset.del, del.dataset.id); render(); } if (adjust) { const item=state.inventory.find(x => x.id === adjust.dataset.id); if (!item) return; item.qty = n(item.qty) + n(adjust.dataset.adjust); log(`Adjusted ${item.title}: ${adjust.dataset.adjust}`); render(); } if (order) { const item=state.inventory.find(x => x.id === order.dataset.id); if (!item) return; item.ordered = !item.ordered; log(`${item.ordered ? 'Marked' : 'Unmarked'} ordered: ${item.title}`); render(); } });
+    $('exportBtn').addEventListener('click', () => { const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dialysis-agent-companion.json'; a.click(); URL.revokeObjectURL(a.href); });
+    function normalizeImportedData(data){
+      const out = { theme: data.theme || 'light', tab: data.tab || data.activeTab || 'home', treatments: [], inventory: [], notes: [], history: Array.isArray(data.history) ? data.history : [] };
+      if (Array.isArray(data.treatments)) out.treatments = data.treatments;
+      if (Array.isArray(data.notes)) out.notes = data.notes;
+      if (Array.isArray(data.inventory)) {
+        out.inventory = data.inventory;
+      } else if (Array.isArray(data.items)) {
+        out.inventory = data.items.map(item => ({
+          id: item.id || uid(),
+          title: item.name || 'Item',
+          detail: [item.category, item.unit, item.expires ? `Expires: ${item.expires}` : '', item.status ? `Status: ${item.status}` : '', item.notes || ''].filter(Boolean).join(' • '),
+          qty: n(item.onHand),
+          reorderPoint: n(item.reorderPoint),
+          ordered: String(item.status || '').toLowerCase().includes('order'),
+          at: new Date().toISOString()
+        }));
       }
-      if (order) {
-        const item=state.inventory.find(x => x.id === order.dataset.id);
-        if (!item) return;
-        item.ordered = !item.ordered;
-        log(`${item.ordered ? 'Marked' : 'Unmarked'} ordered: ${item.title}`);
+      return out;
+    }
+    async function importFromFile(file){
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        if (!data || typeof data !== 'object') throw new Error('Invalid file');
+        const imported = normalizeImportedData(data);
+        state.theme = imported.theme;
+        state.tab = imported.tab;
+        state.treatments = imported.treatments;
+        state.inventory = imported.inventory;
+        state.notes = imported.notes;
+        state.history = Array.isArray(imported.history) ? imported.history.filter(h => h && h.at && h.text) : [];
+        state.history = state.history.filter(h => h && h.at && h.text);
+        log(`Imported backup: ${file.name}`);
+        state.history = state.history.filter(h => h && h.at && h.text);
+        save();
         render();
+      } catch {
+        alert('That file could not be imported.');
       }
-    });
-    $('exportBtn').addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'dialysis-agent-companion.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
-    $('importFile').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      await importFromFile(file);
-      e.target.value = '';
-    });
+    }
+    $('importFile').addEventListener('change', async (e) => { const file = e.target.files[0]; await importFromFile(file); e.target.value = ''; });
     setTheme(state.theme || 'light');
     setTab(state.tab || 'home');
     render();
   </script>
 </body>
 </html>
-
