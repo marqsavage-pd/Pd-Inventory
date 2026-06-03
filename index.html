@@ -109,15 +109,15 @@
     .tab.active { color:var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); }
     .empty { color:var(--muted); text-align:center; padding:18px 10px; }
     .hidden { display:none !important; }
-    @media (max-width:640px) {
-  .status-row, .grid-3 { grid-template-columns:1fr; }
-  .grid-2 { grid-template-columns:1fr; }
+  @media (max-width:640px) {
+  .app { padding: env(safe-area-inset-top) 12px calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 28px); }
   .topbar-inner { flex-direction:column; align-items:stretch; }
   .brand { align-items:flex-start; }
-  .top-actions { justify-content:space-between; width:100%; }
-  .top-actions .pill-btn,
-  .top-actions .icon-btn { flex:1; }
-  .top-actions .pill-btn.primary { min-width:0; }
+  .top-actions { width:100%; justify-content:space-between; flex-wrap:wrap; }
+  .top-actions .icon-btn,
+  .top-actions .pill-btn { flex:1 1 calc(50% - 4px); }
+  .status-row, .grid-3 { grid-template-columns:1fr; }
+  .grid-2 { grid-template-columns:1fr; }
   .adjust-grid { grid-template-columns:repeat(2,1fr); }
   .tab { min-height:58px; }
   .tab .label { font-size:0.68rem; }
