@@ -110,18 +110,19 @@
     .empty { color:var(--muted); text-align:center; padding:18px 10px; }
     .hidden { display:none !important; }
   @media (max-width:640px) {
-  .app { padding: env(safe-area-inset-top) 12px calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 28px); }
+  .status-row, .grid-3 { grid-template-columns:1fr; }
+  .grid-2 { grid-template-columns:1fr; }
   .topbar-inner { flex-direction:column; align-items:stretch; }
   .brand { align-items:flex-start; }
   .top-actions { width:100%; justify-content:space-between; flex-wrap:wrap; }
-  .top-actions .icon-btn,
-  .top-actions .pill-btn { flex:1 1 calc(50% - 4px); }
-  .status-row, .grid-3 { grid-template-columns:1fr; }
-  .grid-2 { grid-template-columns:1fr; }
+  .top-actions .icon-btn { flex:0 0 48px; }
+  .top-actions .pill-btn { flex:1 1 calc(50% - 4px); min-height:44px; padding:0 12px; }
+  .top-actions .pill-btn.primary { flex:1 1 100%; }
   .adjust-grid { grid-template-columns:repeat(2,1fr); }
   .tab { min-height:58px; }
   .tab .label { font-size:0.68rem; }
 }
+
   </style>
 </head>
 <body>
@@ -248,7 +249,19 @@
     function n(v){ return Number(v) || 0; }
     function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
     function renderCounts(){ $('countTreatments').textContent = state.treatments.length; $('countItems').textContent = state.inventory.length; $('countNotes').textContent = state.notes.length; }
-    function renderViews(){ document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); const map={home:$('homeView'), treatments:$('treatmentsView'), inventory:$('inventoryView'), notes:$('notesView'), history:$('historyView')}; (map[state.tab] || map.home).classList.add('active'); document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab)); }
+    function renderViews(){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const map={home:$('homeView'), treatments:$('treatmentsView'), inventory:$('inventoryView'), notes:$('notesView'), history:$('historyView')};
+  const isMobile = window.matchMedia('(max-width:640px)').matches;
+  if (state.tab === 'history' && isMobile) {
+    (map.home).classList.add('active');
+    state.tab = 'home';
+    save();
+  } else {
+    (map[state.tab] || map.home).classList.add('active');
+  }
+  document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab));
+}
     function treatmentEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`; return div; }
     function inventoryEntry(item){ const low = n(item.qty) <= n(item.reorderPoint || 0); const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Item')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div class="meta">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn small btn-secondary" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn small btn-secondary" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn small btn-secondary" data-adjust="1" data-id="${item.id}">+1</button><button class="btn small btn-secondary" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-order="${item.id}">${item.ordered ? 'Unmark ordered' : 'Mark ordered'}</button><button class="btn small btn-secondary" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="inventory" data-id="${item.id}">Delete</button></div>`; return div; }
     function noteEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Note')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="note" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="note" data-id="${item.id}">Delete</button></div>`; return div; }
