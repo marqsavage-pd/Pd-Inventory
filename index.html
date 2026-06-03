@@ -262,6 +262,20 @@
     function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
     function n(v){ return Number(v) || 0; }
     function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+    function treatmentEntry(item) {
+  const detail =
+    item.phase === 'pre'
+      ? `Clear: ${item.clearValue || ''} | BP: ${item.bloodPressure || ''} | Pulse: ${item.pulse || ''} | Temp: ${item.temperature || ''}`
+      : item.phase === 'post'
+        ? `Clear: ${item.clearValue || ''} | Initial Drain: ${item.initialDrain || ''} | TotalUF: ${item.totalUF || ''} | Dwell: ${item.dwellTime || ''}`
+        : (item.detail || '');
+
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.innerHTML = `<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(detail)}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`;
+  return div;
+}
+
     function renderCounts(){ $('countTreatments').textContent = state.treatments.length; $('countItems').textContent = state.inventory.length; $('countNotes').textContent = state.notes.length; }
     function renderViews(){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
