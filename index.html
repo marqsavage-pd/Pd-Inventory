@@ -114,24 +114,34 @@
   .grid-2 { grid-template-columns:1fr; }
   .topbar-inner { flex-direction:column; align-items:stretch; }
   .brand { align-items:flex-start; }
+
   .top-actions {
     display:grid;
     grid-template-columns:42px 1fr;
-    gap:8px;
+    gap:6px;
     width:100%;
   }
+
   .top-actions .icon-btn {
     width:42px;
     height:42px;
+    min-height:42px;
+    padding:0;
   }
+
   .top-actions .pill-btn {
     width:100%;
-    min-height:42px;
-    padding:0 12px;
+    min-height:38px;
+    padding:0 10px;
+    font-size:0.92rem;
+    box-shadow:none;
   }
+
   .top-actions .pill-btn.primary {
     grid-column:1 / -1;
+    min-height:38px;
   }
+
   .adjust-grid { grid-template-columns:repeat(2,1fr); }
   .tab { min-height:58px; }
   .tab .label { font-size:0.68rem; }
@@ -139,6 +149,7 @@
   #tabbar .tab[data-tab="history"] { display:none !important; }
   #tabbar { grid-template-columns:repeat(4, 1fr); }
 }
+
 </style>
 </head>
 <body>
