@@ -300,6 +300,20 @@
   document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab));
 }
     function treatmentEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`; return div; }
+   function filterInventory() {
+  const query = document.getElementById('inventorySearch').value.toLowerCase().trim();
+  const items = document.querySelectorAll('#inventoryList .item');
+
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const search = document.getElementById('inventorySearch');
+  if (search) search.addEventListener('input', filterInventory);
+});
     function inventoryEntry(item){ const low = n(item.qty) <= n(item.reorderPoint || 0); const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Item')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div class="meta">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn small btn-secondary" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn small btn-secondary" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn small btn-secondary" data-adjust="1" data-id="${item.id}">+1</button><button class="btn small btn-secondary" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-order="${item.id}">${item.ordered ? 'Unmark ordered' : 'Mark ordered'}</button><button class="btn small btn-secondary" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="inventory" data-id="${item.id}">Delete</button></div>`; return div; }
     function noteEntry(item){ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Note')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="note" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="note" data-id="${item.id}">Delete</button></div>`; return div; }
     function historyEntry(item){ const div=document.createElement('div'); div.className='history-entry'; div.innerHTML=`<div class="meta">${fmt(item.at)}</div><div>${escapeHtml(item.text)}</div>`; return div; }
