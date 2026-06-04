@@ -258,33 +258,43 @@
  <script>
   const KEY = 'dialysis-agent-companion-v2';
   const $ = id => document.getElementById(id);
-  const state = load() || { theme:'light', tab:'home', treatments:[], inventory:[], notes:[], history:[] };
 
-  let inventorySearchMode = false;
-  let inventorySearchResults = [];
+  const state = load() || {
+    theme: 'light',
+    tab: 'home',
+    treatments: [],
+    inventory: [],
+    notes: [],
+    history: [],
+    inventorySearch: '',
+    showAllTreatments: false
+  };
 
   function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
   function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
   function log(text){
     state.history.unshift({ at:new Date().toISOString(), text });
-    state.history = state.history.filter(h => h && h.at && h.text);
-    state.history = state.history.slice(0,50);
+    state.history = state.history.filter(h => h && h.at && h.text).slice(0,50);
     save();
   }
+
   function setTheme(theme){
     state.theme = theme;
     document.documentElement.dataset.theme = theme;
     save();
   }
+
   function setTab(tab){
     state.tab = tab;
     save();
     render();
   }
+
   function fmt(iso){ return new Date(iso).toLocaleString(); }
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function n(v){ return Number(v) || 0; }
-  function escapeHtml(s){ return String(s ?? '').replace(/[&<>\"]/g, m => ({'&':'amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m])); }
+  function escapeHtml(s){ return String(s ?? '').replace(/[&<>\"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m])); }
 
   function cutoffDate(days){
     return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
@@ -299,38 +309,16 @@
   }
 
   function recentTreatments(){
-    return itemsInLastDays(state.treatments, 5);
+    return state.showAllTreatments ? itemsInLastDays(state.treatments, 10) : itemsInLastDays(state.treatments, 5);
   }
 
-  function historyTreatments(){
-    return itemsInLastDays(state.treatments, 10);
-  }
-
-  function getInventoryToShow(){
-    return inventorySearchMode ? inventorySearchResults : state.inventory;
-  }
-
-  function searchInventory(query) {
-    const q = String(query || '').trim().toLowerCase();
-    if (!q) {
-      inventorySearchMode = false;
-      inventorySearchResults = [];
-      render();
-      return;
-    }
-
-    inventorySearchMode = true;
-    inventorySearchResults = state.inventory.filter(item =>
+  function visibleInventory(){
+    const q = String(state.inventorySearch || '').trim().toLowerCase();
+    if (!q) return state.inventory;
+    return state.inventory.filter(item =>
       String(item.title || '').toLowerCase().includes(q) ||
       String(item.detail || '').toLowerCase().includes(q)
     );
-    render();
-  }
-
-  function clearInventorySearch() {
-    inventorySearchMode = false;
-    inventorySearchResults = [];
-    render();
   }
 
   function renderCounts(){
@@ -393,14 +381,7 @@
     const title = `${phase.toUpperCase()} TREATMENT`;
     const detail = lines.join('\n');
 
-    state.treatments.unshift({
-      id: uid(),
-      title,
-      phase,
-      detail,
-      at: new Date().toISOString()
-    });
-
+    state.treatments.unshift({ id: uid(), title, phase, detail, at: new Date().toISOString() });
     log(`Added treatment: ${title}`);
     render();
   }
@@ -458,7 +439,7 @@
     const title = prompt('Note title?');
     if (!title) return;
     const detail = prompt('Note text?','') || '';
-    state.notes.unshift({id:uid(), title, detail, at:new Date().toISOString()});
+    state.notes.unshift({ id: uid(), title, detail, at: new Date().toISOString() });
     log(`Added note: ${title}`);
     render();
   }
@@ -500,8 +481,8 @@
 
   function renderLists(){
     const treatments = recentTreatments();
-    const historyWindow = historyTreatments();
-    const inventoryToShow = getInventoryToShow();
+    const historyWindow = itemsInLastDays(state.treatments, 10);
+    const inventoryToShow = visibleInventory();
 
     $('treatmentsList').innerHTML = '';
     if (!treatments.length) $('treatmentsList').innerHTML = '<div class="empty">No treatments in the last 5 days.</div>';
@@ -509,7 +490,7 @@
 
     $('inventoryList').innerHTML = '';
     if (!inventoryToShow.length) {
-      $('inventoryList').innerHTML = inventorySearchMode
+      $('inventoryList').innerHTML = state.inventorySearch
         ? '<div class="empty">No inventory items matched your search.</div>'
         : '<div class="empty">No inventory items yet.</div>';
     }
@@ -521,7 +502,7 @@
 
     $('historyList').innerHTML = '';
     if (!historyWindow.length) $('historyList').innerHTML = '<div class="empty">No treatments in the last 10 days.</div>';
-    historyWindow.forEach(item => $('historyList').appendChild(historyEntry(item)));
+    historyWindow.forEach(item => $('historyList').appendChild(treatmentEntry(item)));
   }
 
   function highlightTabs(){
@@ -538,7 +519,7 @@
   }
 
   document.querySelectorAll('[data-tab]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', e => {
       e.preventDefault();
       setTab(btn.dataset.tab);
     });
@@ -568,6 +549,23 @@
     const del = e.target.closest('[data-del]');
     const adjust = e.target.closest('[data-adjust]');
     const order = e.target.closest('[data-order]');
+    const showAllBtn = e.target.closest('[data-show-all-treatments]');
+    const searchClear = e.target.closest('[data-clear-inventory-search]');
+
+    if (showAllBtn) {
+      state.showAllTreatments = !state.showAllTreatments;
+      log(state.showAllTreatments ? 'Show all treatments enabled' : 'Show all treatments disabled');
+      render();
+      return;
+    }
+
+    if (searchClear) {
+      state.inventorySearch = '';
+      inventorySearchMode = false;
+      inventorySearchResults = [];
+      render();
+      return;
+    }
 
     if (edit) {
       editByType(edit.dataset.edit, edit.dataset.id);
@@ -598,6 +596,19 @@
     }
   });
 
+  document.body.addEventListener('input', (e) => {
+    const search = e.target.closest('[data-inventory-search]');
+    if (!search) return;
+    state.inventorySearch = search.value;
+    inventorySearchMode = true;
+    inventorySearchResults = state.inventory.filter(item =>
+      String(item.title || '').toLowerCase().includes(String(search.value || '').toLowerCase()) ||
+      String(item.detail || '').toLowerCase().includes(String(search.value || '').toLowerCase())
+    );
+    renderLists();
+    save();
+  });
+
   $('exportBtn').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
     const a = document.createElement('a');
@@ -614,7 +625,9 @@
       treatments: [],
       inventory: [],
       notes: [],
-      history: Array.isArray(data.history) ? data.history : []
+      history: Array.isArray(data.history) ? data.history : [],
+      inventorySearch: '',
+      showAllTreatments: false
     };
 
     if (Array.isArray(data.treatments)) out.treatments = data.treatments;
@@ -626,13 +639,7 @@
       out.inventory = data.items.map(item => ({
         id: item.id || uid(),
         title: item.name || 'Item',
-        detail: [
-          item.category,
-          item.unit,
-          item.expires ? `Expires: ${item.expires}` : '',
-          item.status ? `Status: ${item.status}` : '',
-          item.notes || ''
-        ].filter(Boolean).join(' • '),
+        detail: [item.category, item.unit, item.expires ? `Expires: ${item.expires}` : '', item.status ? `Status: ${item.status}` : '', item.notes || ''].filter(Boolean).join(' • '),
         qty: n(item.onHand),
         reorderPoint: n(item.reorderPoint),
         ordered: String(item.status || '').toLowerCase().includes('order'),
@@ -655,9 +662,11 @@
       state.inventory = imported.inventory;
       state.notes = imported.notes;
       state.history = Array.isArray(imported.history) ? imported.history.filter(h => h && h.at && h.text) : [];
-      state.history = state.history.filter(h => h && h.at && h.text);
+      state.inventorySearch = '';
+      state.showAllTreatments = false;
+      inventorySearchMode = false;
+      inventorySearchResults = [];
       log(`Imported backup: ${file.name}`);
-      state.history = state.history.filter(h => h && h.at && h.text);
       save();
       render();
     } catch {
