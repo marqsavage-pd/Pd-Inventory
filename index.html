@@ -5,77 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PD Companion</title>
   <style>
-    :root { color-scheme: light; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      background: Canvas;
-      color: CanvasText;
-    }
-    header, nav, main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    nav {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .tab, .btn, .linkbtn {
-      border: 0;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: inherit;
-    }
-    .tab.active { background: #2563eb; color: white; }
-    .btn { background: ButtonFace; color: ButtonText; }
-    .btn-secondary { background: ButtonFace; }
-    .btn-danger { background: #fee2e2; color: #991b1b; }
-    .view { display: none; }
-    .view.active { display: block; }
-    .grid { display: grid; gap: 12px; }
-    .item, .history-entry, .panel {
-      background: Canvas;
-      border: 1px solid color-mix(in srgb, CanvasText 10%, transparent);
-      border-radius: 14px;
-      padding: 14px;
-    }
-    .between { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
-    .row { display: flex; gap: 8px; align-items: center; }
-    .wrap { flex-wrap: wrap; }
-    .item-title { font-weight: 700; }
-    .meta { opacity: .72; font-size: 14px; white-space: pre-wrap; }
-    .tag, .status {
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: color-mix(in srgb, CanvasText 10%, transparent);
-    }
-    .status.good { background: #dcfce7; color: #166534; }
-    .status.bad { background: #fee2e2; color: #991b1b; }
-    .status.warn { background: #fef3c7; color: #92400e; }
-    .qty { font-size: 28px; font-weight: 700; }
-    .adjust-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-    .empty { opacity: .7; padding: 14px; text-align: center; }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid color-mix(in srgb, CanvasText 20%, transparent);
-      background: Canvas;
-      color: CanvasText;
-    }
-    @media (max-width: 700px) {
-      .adjust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
+    ::root { color-scheme: light; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background: #ffffff;
+  color: #111827;
+}
+
+header, nav, main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tab, .btn, .linkbtn {
+  border: 1px solid rgba(17, 24, 39, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #111827;
+  background: #f3f4f6;
+}
+
+.tab.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.grid { display: grid; gap: 12px; }
+
+.item, .history-entry, .panel {
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.between { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.row { display: flex; gap: 8px; align-items: center; }
+.wrap { flex-wrap: wrap; }
+.item-title { font-weight: 700; }
+.meta { opacity: .72; font-size: 14px; white-space: pre-wrap; }
+
+.tag, .status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.status.good { background: #dcfce7; color: #166534; }
+.status.bad { background: #fee2e2; color: #991b1b; }
+.status.warn { background: #fef3c7; color: #92400e; }
+
+.qty { font-size: 28px; font-weight: 700; }
+
+.adjust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.empty { opacity: .7; padding: 14px; text-align: center; }
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(17, 24, 39, 0.15);
+  background: #ffffff;
+  color: #111827;
+}
+
+@media (max-width: 700px) {
+  .adjust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
   </style>
 </head>
 <body>
