@@ -564,7 +564,10 @@ input[type="text"] {
     }
 
     setTab(state.tab || 'home');
-    render();
+    render();window.addEventListener('DOMContentLoaded', () => {
+  if (!state.tab) state.tab = 'home';
+  render();
+});
   </script>
 </body>
 </html>
