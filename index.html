@@ -8,7 +8,6 @@
     body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: #fff; color: #111827; }
     header, nav, main { max-width: 1100px; margin: 0 auto; padding: 16px; }
     nav { display: flex; gap: 8px; flex-wrap: wrap; }
-    button, a { font: inherit; }
     .tab, .btn, .linkbtn {
       border: 1px solid rgba(17,24,39,.15); border-radius: 10px; padding: 10px 14px; background: #f3f4f6; color:#111827;
       text-decoration: none; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
@@ -47,6 +46,8 @@
     <button class="tab" data-tab="inventory">Inventory</button>
     <button class="tab" data-tab="notes">Notes</button>
     <button class="tab" data-tab="history">History</button>
+    <button class="tab" id="backupBtn">Backup</button>
+    <button class="tab" id="restoreBtn">Restore</button>
     <a class="linkbtn" href="https://account.vantive.com" target="_blank" rel="noopener">Vantive</a>
     <a class="linkbtn" href="https://davita.welldyne.com" target="_blank" rel="noopener">WellDyne</a>
   </nav>
@@ -87,12 +88,14 @@
     <section id="historyView" class="view"><div class="panel"><h2>History</h2><div id="historyList" class="grid"></div></div></section>
   </main>
   <script>
-    const KEY='pd-companion-stable-v1';
+    const KEY='pd-companion-stable-v2';
     const $=id=>document.getElementById(id);
     const defaults={tab:'home',treatments:[],inventory:[],notes:[],history:[],inventorySearch:'',showAllTreatments:false,treatmentShortcuts:[{id:'pre',title:'Pre-Treatment',detail:'Date, weight, BP, pulse, temp, edema, dextrose'},{id:'post',title:'Post-Treatment',detail:'Clear, initial drain, UF, dwell time, misc info'}]};
     let state=loadState();
     function loadState(){ try { const x=JSON.parse(localStorage.getItem(KEY)); return x && typeof x==='object' ? {...defaults,...x} : {...defaults}; } catch { return {...defaults}; } }
     function saveState(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+    function exportState(){ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pd-companion-backup.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+    function importState(file){ const reader=new FileReader(); reader.onload=()=>{ try { const data=JSON.parse(String(reader.result||'{}')); if(!data||typeof data!=='object') throw new Error('bad'); state={...defaults,...data}; saveState(); render(); } catch { alert('Could not restore backup.'); } }; reader.readAsText(file); }
     function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
     function n(v){ return Number(v)||0; }
     function fmt(iso){ return new Date(iso).toLocaleString(); }
@@ -124,6 +127,8 @@
     $('addNoteBtn').addEventListener('click', addNote);
     $('addTreatmentShortcutBtn').addEventListener('click', addShortcut);
     $('goInventorySearchBtn').addEventListener('click', () => { state.tab='inventory'; saveState(); render(); setTimeout(() => { const input=document.querySelector('[data-inventory-search]'); if (input) input.focus(); }, 50); });
+    $('backupBtn').addEventListener('click', exportState);
+    $('restoreBtn').addEventListener('click', () => { const input=document.createElement('input'); input.type='file'; input.accept='application/json'; input.onchange=()=>{ if (input.files && input.files[0]) importState(input.files[0]); }; input.click(); });
     document.body.addEventListener('click', e => {
       const edit=e.target.closest('[data-edit]'); const del=e.target.closest('[data-del]'); const adjust=e.target.closest('[data-adjust]'); const order=e.target.closest('[data-order]'); const jump=e.target.closest('[data-jump-inventory]'); const shortcut=e.target.closest('[data-shortcut]'); const showAll=e.target.closest('[data-show-all-treatments]'); const clearSearch=e.target.closest('[data-clear-inventory-search]');
       if (shortcut) { const s = state.treatmentShortcuts.find(x => x.id === shortcut.dataset.shortcut); if (s) alert(`${s.title}\n\n${s.detail || 'No details yet.'}`); return; }
