@@ -5,428 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PD Companion</title>
   <style>
-    :root { color-scheme: light; }
-    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: #ffffff; color: #111827; }
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: #fff; color: #111827; }
     header, nav, main { max-width: 1100px; margin: 0 auto; padding: 16px; }
-    nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    button, a { font: inherit; }
     .tab, .btn, .linkbtn {
-      border: 1px solid rgba(17, 24, 39, 0.15); border-radius: 10px; padding: 10px 14px; cursor: pointer;
-      text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      color: #111827; background: #f3f4f6; font-size: 14px;
+      border: 1px solid rgba(17,24,39,.15); border-radius: 10px; padding: 10px 14px; background: #f3f4f6; color:#111827;
+      text-decoration: none; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
     }
-    .linkbtn { padding: 8px 12px; }
-    .tab.active { background: #2563eb; color: #ffffff; }
-    .btn { background: #f3f4f6; color: #111827; }
-    .btn-secondary { background: #f3f4f6; }
-    .btn-danger { background: #fee2e2; color: #991b1b; }
-    .view { display: none; }
-    .view.active { display: block; }
-    .grid { display: grid; gap: 12px; }
-    .item, .history-entry, .panel { background: #ffffff; border: 1px solid rgba(17, 24, 39, 0.10); border-radius: 14px; padding: 14px; }
-    .between { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
-    .row { display: flex; gap: 8px; align-items: center; }
-    .wrap { flex-wrap: wrap; }
-    .item-title { font-weight: 700; }
-    .meta { opacity: .72; font-size: 14px; white-space: pre-wrap; }
-    .tag, .status { font-size: 12px; padding: 4px 8px; border-radius: 999px; background: rgba(17, 24, 39, 0.08); }
-    .status.good { background: #dcfce7; color: #166534; }
-    .status.bad { background: #fee2e2; color: #991b1b; }
-    .status.warn { background: #fef3c7; color: #92400e; }
-    .qty { font-size: 28px; font-weight: 700; }
-    .adjust-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-    .empty { opacity: .7; padding: 14px; text-align: center; }
-    .dashboard-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
-    .mini-card { min-height: 92px; }
-    .mini-label { font-size: 12px; opacity: 0.7; }
-    .mini-value { font-size: 28px; font-weight: 700; margin-top: 6px; }
-    .quick-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-    .quick-link-card { min-height: 84px; }
-    .quick-link-title { font-size: 15px; font-weight: 700; }
-    .quick-link-desc { font-size: 13px; opacity: .72; margin-top: 4px; }
-    .small-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .treatment-shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-    .shortcut-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    input[type="text"] { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(17, 24, 39, 0.15); background: #ffffff; color: #111827; font-size: 16px; }
-    @media (max-width: 700px) {
-      .adjust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .dashboard-grid, .quick-links, .treatment-shortcuts { grid-template-columns: 1fr; }
-    }
+    .tab.active { background:#2563eb; color:#fff; }
+    .view { display:none; }
+    .view.active { display:block; }
+    .panel { background:#fff; border:1px solid rgba(17,24,39,.10); border-radius:14px; padding:14px; }
+    .grid { display:grid; gap:12px; }
+    .dashboard-grid, .quick-links { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .mini-card, .quick-link-card { border:1px solid rgba(17,24,39,.10); border-radius:14px; padding:14px; }
+    .mini-label { font-size:12px; opacity:.7; }
+    .mini-value { font-size:28px; font-weight:700; margin-top:6px; }
+    .quick-link-title { font-size:15px; font-weight:700; }
+    .quick-link-desc { font-size:13px; opacity:.72; margin-top:4px; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; }
+    .small-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .item { border:1px solid rgba(17,24,39,.10); border-radius:14px; padding:14px; }
+    .between { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .tag, .status { font-size:12px; padding:4px 8px; border-radius:999px; background: rgba(17,24,39,.08); }
+    .status.good { background:#dcfce7; color:#166534; }
+    .status.bad { background:#fee2e2; color:#991b1b; }
+    .status.warn { background:#fef3c7; color:#92400e; }
+    .qty { font-size:28px; font-weight:700; }
+    .adjust-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:10px; }
+    .shortcut-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    input[type="text"] { width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(17,24,39,.15); font-size:16px; }
+    @media (max-width: 700px) { .dashboard-grid, .quick-links, .adjust-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>PD Companion</h1>
-  </header>
-
-  <nav id="tabbar">
-    <button class="tab" data-tab="home">Home</button>
+  <header><h1>PD Companion</h1></header>
+  <nav>
+    <button class="tab active" data-tab="home">Home</button>
     <button class="tab" data-tab="treatments">Treatments</button>
     <button class="tab" data-tab="inventory">Inventory</button>
     <button class="tab" data-tab="notes">Notes</button>
     <button class="tab" data-tab="history">History</button>
     <a class="linkbtn" href="https://account.vantive.com" target="_blank" rel="noopener">Vantive</a>
     <a class="linkbtn" href="https://davita.welldyne.com" target="_blank" rel="noopener">WellDyne</a>
-    <button class="tab" id="dataActionBtn">Import / Export</button>
   </nav>
-
   <main>
-    <section id="homeView" class="view">
+    <section id="homeView" class="view active">
       <div class="panel">
         <h2>Quick actions</h2>
-        <div class="row wrap">
+        <div class="row">
           <button class="btn" id="addTreatmentBtn">Add Treatment</button>
           <button class="btn" id="addItemBtn">Add Inventory</button>
           <button class="btn" id="addNoteBtn">Add Note</button>
         </div>
-
         <div class="dashboard-grid">
-          <div class="panel mini-card">
-            <div class="mini-label">Treatments</div>
-            <div class="mini-value" id="countTreatments">0</div>
-          </div>
-          <div class="panel mini-card">
-            <div class="mini-label">Inventory</div>
-            <div class="mini-value" id="countItems">0</div>
-          </div>
-          <div class="panel mini-card">
-            <div class="mini-label">Notes</div>
-            <div class="mini-value" id="countNotes">0</div>
-          </div>
-          <div class="panel mini-card">
-            <div class="mini-label">Recent</div>
-            <div class="mini-value" id="recentCount">0</div>
-          </div>
+          <div class="mini-card"><div class="mini-label">Treatments</div><div class="mini-value" id="countTreatments">0</div></div>
+          <div class="mini-card"><div class="mini-label">Inventory</div><div class="mini-value" id="countItems">0</div></div>
+          <div class="mini-card"><div class="mini-label">Notes</div><div class="mini-value" id="countNotes">0</div></div>
+          <div class="mini-card"><div class="mini-label">Recent</div><div class="mini-value" id="recentCount">0</div></div>
         </div>
-
         <div class="quick-links">
-          <div class="panel quick-link-card">
-            <div class="quick-link-title">Low stock</div>
-            <div class="quick-link-desc" id="lowStockText">No low stock items.</div>
-          </div>
-          <div class="panel quick-link-card">
-            <div class="quick-link-title">Recent activity</div>
-            <div class="quick-link-desc" id="recentActivityText">No recent activity yet.</div>
-          </div>
-          <div class="panel quick-link-card">
-            <div class="quick-link-title">Search inventory</div>
-            <div class="quick-link-desc">Open inventory and search instantly.</div>
-            <div class="small-actions">
-              <button class="btn btn-secondary" id="goInventorySearchBtn">Go to Search</button>
-            </div>
-          </div>
-          <div class="panel quick-link-card">
-            <div class="quick-link-title">Favorites</div>
-            <div class="quick-link-desc">Top used items from inventory.</div>
-            <div class="small-actions" id="favoritesChips"></div>
-          </div>
+          <div class="quick-link-card"><div class="quick-link-title">Low stock</div><div class="quick-link-desc" id="lowStockText">No low stock items.</div></div>
+          <div class="quick-link-card"><div class="quick-link-title">Recent activity</div><div class="quick-link-desc" id="recentActivityText">No recent activity yet.</div></div>
+          <div class="quick-link-card"><div class="quick-link-title">Search inventory</div><div class="quick-link-desc">Open inventory and search instantly.</div><div class="small-actions"><button class="btn" id="goInventorySearchBtn">Go to Search</button></div></div>
+          <div class="quick-link-card"><div class="quick-link-title">Favorites</div><div class="quick-link-desc">Top used items from inventory.</div><div class="small-actions" id="favoritesChips"></div></div>
         </div>
-
         <div class="panel" style="margin-top:12px;">
           <div class="between">
             <h2>Treatment shortcuts</h2>
-            <button class="btn btn-secondary" id="addTreatmentShortcutBtn">Add Shortcut</button>
+            <button class="btn" id="addTreatmentShortcutBtn">Add Shortcut</button>
           </div>
           <div class="quick-link-desc">Quick access to your pre/post treatment shortcuts.</div>
           <div class="shortcut-list" id="treatmentShortcutList"></div>
         </div>
       </div>
     </section>
-
-    <section id="treatmentsView" class="view">
-      <div class="panel">
-        <div class="between">
-          <h2>Treatments</h2>
-          <button class="btn btn-secondary" data-show-all-treatments>Show All Treatments</button>
-        </div>
-        <div id="treatmentsList" class="grid"></div>
-      </div>
-    </section>
-
-    <section id="inventoryView" class="view">
-      <div class="panel">
-        <div class="between">
-          <h2>Inventory</h2>
-          <button class="btn btn-secondary" data-clear-inventory-search>Clear Search</button>
-        </div>
-        <input type="text" data-inventory-search placeholder="Search inventory">
-        <div id="inventoryList" class="grid" style="margin-top:12px;"></div>
-      </div>
-    </section>
-
-    <section id="notesView" class="view">
-      <div class="panel">
-        <h2>Notes</h2>
-        <div id="notesList" class="grid"></div>
-      </div>
-    </section>
-
-    <section id="historyView" class="view">
-      <div class="panel">
-        <h2>History</h2>
-        <div id="historyList" class="grid"></div>
-      </div>
-    </section>
-
-    <div style="display:none;">
-      <span id="countTreatments"></span>
-      <span id="countItems"></span>
-      <span id="countNotes"></span>
-    </div>
+    <section id="treatmentsView" class="view"><div class="panel"><div class="between"><h2>Treatments</h2><button class="btn" data-show-all-treatments>Show All Treatments</button></div><div id="treatmentsList" class="grid"></div></div></section>
+    <section id="inventoryView" class="view"><div class="panel"><div class="between"><h2>Inventory</h2><button class="btn" data-clear-inventory-search>Clear Search</button></div><input type="text" data-inventory-search placeholder="Search inventory"><div id="inventoryList" class="grid" style="margin-top:12px;"></div></div></section>
+    <section id="notesView" class="view"><div class="panel"><h2>Notes</h2><div id="notesList" class="grid"></div></div></section>
+    <section id="historyView" class="view"><div class="panel"><h2>History</h2><div id="historyList" class="grid"></div></div></section>
   </main>
-
   <script>
-    const KEY = 'dialysis-agent-companion-v2';
-    const $ = id => document.getElementById(id);
-
-    const state = load() || {
-      tab: 'home',
-      treatments: [],
-      inventory: [],
-      notes: [],
-      history: [],
-      inventorySearch: '',
-      showAllTreatments: false,
-      treatmentShortcuts: [
-        { id: 'pre', title: 'Pre-Treatment', detail: 'Date, weight, BP, pulse, temp, edema, dextrose' },
-        { id: 'post', title: 'Post-Treatment', detail: 'Clear, initial drain, UF, dwell time, misc info' }
-      ]
-    };
-
-    function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
-    function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-    function log(text){
-      state.history.unshift({ at:new Date().toISOString(), text });
-      state.history = state.history.filter(h => h && h.at && h.text).slice(0,50);
-      save();
-    }
-    function setTab(tab){ state.tab = tab; save(); render(); }
+    const KEY='pd-companion-stable-v1';
+    const $=id=>document.getElementById(id);
+    const defaults={tab:'home',treatments:[],inventory:[],notes:[],history:[],inventorySearch:'',showAllTreatments:false,treatmentShortcuts:[{id:'pre',title:'Pre-Treatment',detail:'Date, weight, BP, pulse, temp, edema, dextrose'},{id:'post',title:'Post-Treatment',detail:'Clear, initial drain, UF, dwell time, misc info'}]};
+    let state=loadState();
+    function loadState(){ try { const x=JSON.parse(localStorage.getItem(KEY)); return x && typeof x==='object' ? {...defaults,...x} : {...defaults}; } catch { return {...defaults}; } }
+    function saveState(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+    function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+    function n(v){ return Number(v)||0; }
     function fmt(iso){ return new Date(iso).toLocaleString(); }
-    function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-    function n(v){ return Number(v) || 0; }
-    function escapeHtml(s){ return String(s ?? '').replace(/[&<>\\"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','\\"':'&quot;'}[m])); }
-    function cutoffDate(days){ return new Date(Date.now() - days * 24 * 60 * 60 * 1000); }
-    function itemsInLastDays(list, days){ const cutoff = cutoffDate(days); return list.filter(item => { const d = new Date(item.at || 0); return !isNaN(d) && d >= cutoff; }); }
+    function escapeHtml(s){ return String(s ?? '').replace(/[&<>\"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m])); }
+    function log(text){ state.history.unshift({at:new Date().toISOString(),text}); state.history=state.history.slice(0,50); saveState(); }
+    function cutoffDate(days){ return new Date(Date.now()-days*24*60*60*1000); }
+    function itemsInLastDays(list, days){ const c=cutoffDate(days); return list.filter(x => { const d=new Date(x.at||0); return !isNaN(d) && d>=c; }); }
+    function lowStockItems(){ return state.inventory.filter(i => n(i.qty) <= n(i.reorderPoint || 0)); }
+    function visibleInventory(){ const q=(state.inventorySearch||'').trim().toLowerCase(); return q ? state.inventory.filter(i => String(i.title||'').toLowerCase().includes(q) || String(i.detail||'').toLowerCase().includes(q)) : state.inventory; }
     function recentTreatments(){ return state.showAllTreatments ? itemsInLastDays(state.treatments, 10) : itemsInLastDays(state.treatments, 5); }
-    function visibleInventory(){ const q = String(state.inventorySearch || '').trim().toLowerCase(); if (!q) return state.inventory; return state.inventory.filter(item => String(item.title || '').toLowerCase().includes(q) || String(item.detail || '').toLowerCase().includes(q)); }
-    function lowStockItems(){ return state.inventory.filter(item => n(item.qty) <= n(item.reorderPoint || 0)); }
-
-    function renderCounts(){
-      $('countTreatments').textContent = recentTreatments().length;
-      $('countItems').textContent = state.inventory.length;
-      $('countNotes').textContent = state.notes.length;
-      $('recentCount').textContent = itemsInLastDays(state.treatments, 10).length;
-    }
-
-    function renderHomeWidgets(){
-      const low = lowStockItems();
-      $('lowStockText').textContent = low.length ? low.slice(0, 3).map(i => `${i.title} (${n(i.qty)})`).join(' • ') : 'No low stock items.';
-      const recent = state.history.slice(0, 3);
-      $('recentActivityText').textContent = recent.length ? recent.map(h => h.text).join(' • ') : 'No recent activity yet.';
-      const fav = state.inventory.slice().sort((a,b) => n(b.qty) - n(a.qty)).slice(0, 3);
-      const chips = $('favoritesChips');
-      chips.innerHTML = '';
-      if (!fav.length) {
-        const span = document.createElement('span');
-        span.className = 'tag';
-        span.textContent = 'Add inventory first';
-        chips.appendChild(span);
-      } else {
-        fav.forEach(item => {
-          const btn = document.createElement('button');
-          btn.className = 'btn btn-secondary';
-          btn.textContent = item.title;
-          btn.dataset.jumpInventory = item.id;
-          chips.appendChild(btn);
-        });
-      }
-
-      const shortcuts = $('treatmentShortcutList');
-      shortcuts.innerHTML = '';
-      state.treatmentShortcuts.forEach(sc => {
-        const btn = document.createElement('button');
-        btn.className = 'btn btn-secondary';
-        btn.textContent = sc.title;
-        btn.dataset.shortcut = sc.id;
-        shortcuts.appendChild(btn);
-      });
-    }
-
-    function renderViews(){
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      const map = { home: $('homeView'), treatments: $('treatmentsView'), inventory: $('inventoryView'), notes: $('notesView'), history: $('historyView') };
-      (map[state.tab] || map.home).classList.add('active');
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === state.tab));
-    }
-
-    function treatmentEntry(item){
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Treatment')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="treatment" data-id="${item.id}">Delete</button></div>`;
-      return div;
-    }
-
-    function inventoryEntry(item){
-      const low = n(item.qty) <= n(item.reorderPoint || 0);
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Item')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div class="meta">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn small btn-secondary" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn small btn-secondary" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn small btn-secondary" data-adjust="1" data-id="${item.id}">+1</button><button class="btn small btn-secondary" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-order="${item.id}">${item.ordered ? 'Unorder' : 'Order'}</button><button class="btn small btn-secondary" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="inventory" data-id="${item.id}">Delete</button></div>`;
-      return div;
-    }
-
-    function noteEntry(item){
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `<div class="between"><div><div class="item-title">${escapeHtml(item.title || 'Note')}</div><div class="meta">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row wrap" style="margin-top:10px;"><button class="btn small btn-secondary" data-edit="note" data-id="${item.id}">Edit</button><button class="btn small btn-danger" data-del="note" data-id="${item.id}">Delete</button></div>`;
-      return div;
-    }
-
-    function addTreatment(){ const title = prompt('Treatment title'); if (!title) return; const detail = prompt('Details', '') || ''; state.treatments.unshift({ id: uid(), title, detail, at: new Date().toISOString() }); log(`Added treatment: ${title}`); render(); }
-    function addInventoryItem(){ const title = prompt('Item name'); if (!title) return; const detail = prompt('Details', '') || ''; const qty = n(prompt('Quantity', '0')); const reorderPoint = n(prompt('Reorder point', '0')); state.inventory.unshift({ id: uid(), title, detail, qty, reorderPoint, ordered: false, at: new Date().toISOString() }); log(`Added inventory: ${title}`); render(); }
-    function addNote(){ const title = prompt('Note title'); if (!title) return; const detail = prompt('Note text', '') || ''; state.notes.unshift({ id: uid(), title, detail, at: new Date().toISOString() }); log(`Added note: ${title}`); render(); }
-
-    function editByType(type, itemId){
-      const key = type === 'inventory' ? 'inventory' : type + 's';
-      const list = state[key];
-      const item = list.find(x => x.id === itemId);
-      if (!item) return;
-      const title = prompt('Title', item.title || '');
-      if (title === null) return;
-      const detail = prompt('Details', item.detail || '') || '';
-      item.title = title;
-      item.detail = detail;
-      if (type === 'inventory') {
-        item.qty = n(prompt('Quantity', item.qty ?? 0));
-        item.reorderPoint = n(prompt('Reorder point', item.reorderPoint ?? 0));
-      }
-      item.at = new Date().toISOString();
-      log(`Edited ${type}: ${title}`);
-      render();
-    }
-
-    function deleteByType(type, itemId){
-      const key = type === 'inventory' ? 'inventory' : type + 's';
-      const list = state[key];
-      const idx = list.findIndex(x => x.id === itemId);
-      if (idx < 0) return;
-      const name = list[idx].title || type;
-      if (!confirm(`Delete ${name}?`)) return;
-      list.splice(idx,1);
-      log(`Deleted ${type}: ${name}`);
-      render();
-    }
-
-    function normalizeImportedData(data){
-      return {
-        tab: ['home','treatments','inventory','notes','history'].includes(data.tab) ? data.tab : 'home',
-        treatments: Array.isArray(data.treatments) ? data.treatments.filter(x => x && typeof x === 'object') : [],
-        inventory: Array.isArray(data.inventory) ? data.inventory.filter(x => x && typeof x === 'object') : [],
-        notes: Array.isArray(data.notes) ? data.notes.filter(x => x && typeof x === 'object') : [],
-        history: Array.isArray(data.history) ? data.history.filter(x => x && typeof x === 'object') : []
-      };
-    }
-
-    function renderLists(){
-      const treatments = recentTreatments();
-      const historyWindow = itemsInLastDays(state.treatments, 10);
-      const inventoryToShow = visibleInventory();
-
-      $('treatmentsList').innerHTML = '';
-      if (!treatments.length) $('treatmentsList').innerHTML = '<div class="empty">No treatments found.</div>';
-      treatments.forEach(item => $('treatmentsList').appendChild(treatmentEntry(item)));
-
-      $('inventoryList').innerHTML = '';
-      if (!inventoryToShow.length) $('inventoryList').innerHTML = state.inventorySearch ? '<div class="empty">No inventory items matched your search.</div>' : '<div class="empty">No inventory items yet.</div>';
-      inventoryToShow.forEach(item => $('inventoryList').appendChild(inventoryEntry(item)));
-
-      $('notesList').innerHTML = '';
-      if (!state.notes.length) $('notesList').innerHTML = '<div class="empty">No notes yet.</div>';
-      state.notes.forEach(item => $('notesList').appendChild(noteEntry(item)));
-
-      $('historyList').innerHTML = '';
-      if (!historyWindow.length) $('historyList').innerHTML = '<div class="empty">No treatments in the last 10 days.</div>';
-      historyWindow.forEach(item => $('historyList').appendChild(treatmentEntry(item)));
-    }
-
-    function render(){
-      renderCounts();
-      renderHomeWidgets();
-      renderViews();
-      renderLists();
-      save();
-    }
-
+    function setTab(tab){ state.tab=tab; saveState(); render(); }
+    function activateView(){ document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); const map={home:'homeView',treatments:'treatmentsView',inventory:'inventoryView',notes:'notesView',history:'historyView'}; document.getElementById(map[state.tab] || 'homeView').classList.add('active'); document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab===state.tab)); }
+    function renderCounts(){ $('countTreatments').textContent = recentTreatments().length; $('countItems').textContent = state.inventory.length; $('countNotes').textContent = state.notes.length; $('recentCount').textContent = itemsInLastDays(state.treatments, 10).length; }
+    function renderHome(){ const low=lowStockItems(); $('lowStockText').textContent = low.length ? low.slice(0,3).map(i => `${i.title} (${n(i.qty)})`).join(' • ') : 'No low stock items.'; const recent=state.history.slice(0,3); $('recentActivityText').textContent = recent.length ? recent.map(h => h.text).join(' • ') : 'No recent activity yet.'; const fav=state.inventory.slice().sort((a,b)=>n(b.qty)-n(a.qty)).slice(0,3); const chips=$('favoritesChips'); chips.innerHTML=''; if (!fav.length) { const s=document.createElement('span'); s.className='tag'; s.textContent='Add inventory first'; chips.appendChild(s); } else { fav.forEach(i => { const b=document.createElement('button'); b.className='btn'; b.textContent=i.title; b.dataset.jumpInventory=i.id; chips.appendChild(b); }); } const sc=$('treatmentShortcutList'); sc.innerHTML=''; state.treatmentShortcuts.forEach(x => { const b=document.createElement('button'); b.className='btn'; b.textContent=x.title; b.dataset.shortcut=x.id; sc.appendChild(b); }); }
+    function treatmentCard(item){ const d=document.createElement('div'); d.className='item'; d.innerHTML = `<div class="between"><div><div><strong>${escapeHtml(item.title || 'Treatment')}</strong></div><div style="opacity:.72;font-size:14px;white-space:pre-wrap;">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row" style="margin-top:10px;"><button class="btn" data-edit="treatment" data-id="${item.id}">Edit</button><button class="btn" data-del="treatment" data-id="${item.id}">Delete</button></div>`; return d; }
+    function inventoryCard(item){ const low = n(item.qty) <= n(item.reorderPoint || 0); const d=document.createElement('div'); d.className='item'; d.innerHTML = `<div class="between"><div><div><strong>${escapeHtml(item.title || 'Item')}</strong></div><div style="opacity:.72;font-size:14px;white-space:pre-wrap;">${escapeHtml(item.detail || '')}</div></div><span class="status ${item.ordered ? 'warn' : (low ? 'bad' : 'good')}">${item.ordered ? 'Ordered' : (low ? 'Low' : 'OK')}</span></div><div class="between" style="margin-top:10px;"><div class="qty">${n(item.qty)}</div><div style="opacity:.72;">Reorder at ${n(item.reorderPoint || 0)}</div></div><div class="adjust-grid"><button class="btn" data-adjust="-5" data-id="${item.id}">-5</button><button class="btn" data-adjust="-1" data-id="${item.id}">-1</button><button class="btn" data-adjust="1" data-id="${item.id}">+1</button><button class="btn" data-adjust="5" data-id="${item.id}">+5</button></div><div class="row" style="margin-top:10px;"><button class="btn" data-order="${item.id}">${item.ordered ? 'Unorder' : 'Order'}</button><button class="btn" data-edit="inventory" data-id="${item.id}">Edit</button><button class="btn" data-del="inventory" data-id="${item.id}">Delete</button></div>`; return d; }
+    function noteCard(item){ const d=document.createElement('div'); d.className='item'; d.innerHTML = `<div class="between"><div><div><strong>${escapeHtml(item.title || 'Note')}</strong></div><div style="opacity:.72;font-size:14px;white-space:pre-wrap;">${escapeHtml(item.detail || '')}</div></div><span class="tag">${fmt(item.at)}</span></div><div class="row" style="margin-top:10px;"><button class="btn" data-edit="note" data-id="${item.id}">Edit</button><button class="btn" data-del="note" data-id="${item.id}">Delete</button></div>`; return d; }
+    function renderLists(){ const t=recentTreatments(); const i=visibleInventory(); const h=itemsInLastDays(state.treatments,10); $('treatmentsList').innerHTML=''; if (!t.length) $('treatmentsList').innerHTML='<div class="item">No treatments found.</div>'; t.forEach(x => $('treatmentsList').appendChild(treatmentCard(x))); $('inventoryList').innerHTML=''; if (!i.length) $('inventoryList').innerHTML = state.inventorySearch ? '<div class="item">No inventory items matched your search.</div>' : '<div class="item">No inventory items yet.</div>'; i.forEach(x => $('inventoryList').appendChild(inventoryCard(x))); $('notesList').innerHTML=''; if (!state.notes.length) $('notesList').innerHTML='<div class="item">No notes yet.</div>'; state.notes.forEach(x => $('notesList').appendChild(noteCard(x))); $('historyList').innerHTML=''; if (!h.length) $('historyList').innerHTML='<div class="item">No treatments in the last 10 days.</div>'; h.forEach(x => $('historyList').appendChild(treatmentCard(x))); }
+    function render(){ activateView(); renderCounts(); renderHome(); renderLists(); saveState(); }
+    function addTreatment(){ const title=prompt('Treatment title'); if(!title) return; const detail=prompt('Details', '') || ''; state.treatments.unshift({ id: uid(), title, detail, at: new Date().toISOString() }); log(`Added treatment: ${title}`); render(); }
+    function addInventory(){ const title=prompt('Item name'); if(!title) return; const detail=prompt('Details', '') || ''; const qty=n(prompt('Quantity', '0')); const reorderPoint=n(prompt('Reorder point', '0')); state.inventory.unshift({ id: uid(), title, detail, qty, reorderPoint, ordered: false, at: new Date().toISOString() }); log(`Added inventory: ${title}`); render(); }
+    function addNote(){ const title=prompt('Note title'); if(!title) return; const detail=prompt('Note text', '') || ''; state.notes.unshift({ id: uid(), title, detail, at: new Date().toISOString() }); log(`Added note: ${title}`); render(); }
+    function addShortcut(){ const title=prompt('Shortcut title'); if(!title) return; const detail=prompt('Shortcut details', '') || ''; state.treatmentShortcuts.push({ id: uid(), title, detail }); log(`Added treatment shortcut: ${title}`); render(); }
+    function editByType(type, id){ const key = type === 'inventory' ? 'inventory' : type + 's'; const list = state[key]; const item = list.find(x => x.id === id); if (!item) return; const title=prompt('Title', item.title || ''); if (title === null) return; const detail=prompt('Details', item.detail || '') || ''; item.title=title; item.detail=detail; if (type === 'inventory') { item.qty=n(prompt('Quantity', item.qty ?? 0)); item.reorderPoint=n(prompt('Reorder point', item.reorderPoint ?? 0)); } item.at=new Date().toISOString(); log(`Edited ${type}: ${title}`); render(); }
+    function delByType(type, id){ const key = type === 'inventory' ? 'inventory' : type + 's'; const list = state[key]; const idx=list.findIndex(x => x.id === id); if (idx < 0) return; const name = list[idx].title || type; if (!confirm(`Delete ${name}?`)) return; list.splice(idx,1); log(`Deleted ${type}: ${name}`); render(); }
     document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', e => { e.preventDefault(); setTab(btn.dataset.tab); }));
     $('addTreatmentBtn').addEventListener('click', addTreatment);
-    $('addItemBtn').addEventListener('click', addInventoryItem);
+    $('addItemBtn').addEventListener('click', addInventory);
     $('addNoteBtn').addEventListener('click', addNote);
-    $('goInventorySearchBtn').addEventListener('click', () => { state.tab = 'inventory'; save(); render(); setTimeout(() => { const input = document.querySelector('[data-inventory-search]'); if (input) input.focus(); }, 50); });
-    $('addTreatmentShortcutBtn').addEventListener('click', () => {
-      const title = prompt('Shortcut title');
-      if (!title) return;
-      const detail = prompt('Shortcut details', '') || '';
-      state.treatmentShortcuts.push({ id: uid(), title, detail });
-      log(`Added treatment shortcut: ${title}`);
-      render();
+    $('addTreatmentShortcutBtn').addEventListener('click', addShortcut);
+    $('goInventorySearchBtn').addEventListener('click', () => { state.tab='inventory'; saveState(); render(); setTimeout(() => { const input=document.querySelector('[data-inventory-search]'); if (input) input.focus(); }, 50); });
+    document.body.addEventListener('click', e => {
+      const edit=e.target.closest('[data-edit]'); const del=e.target.closest('[data-del]'); const adjust=e.target.closest('[data-adjust]'); const order=e.target.closest('[data-order]'); const jump=e.target.closest('[data-jump-inventory]'); const shortcut=e.target.closest('[data-shortcut]'); const showAll=e.target.closest('[data-show-all-treatments]'); const clearSearch=e.target.closest('[data-clear-inventory-search]');
+      if (shortcut) { const s = state.treatmentShortcuts.find(x => x.id === shortcut.dataset.shortcut); if (s) alert(`${s.title}\n\n${s.detail || 'No details yet.'}`); return; }
+      if (jump) { state.tab='inventory'; state.inventorySearch = jump.textContent; saveState(); render(); setTimeout(() => { const input=document.querySelector('[data-inventory-search]'); if (input) input.focus(); }, 50); return; }
+      if (showAll) { state.showAllTreatments = !state.showAllTreatments; log(state.showAllTreatments ? 'Show all treatments enabled' : 'Show all treatments disabled'); render(); return; }
+      if (clearSearch) { state.inventorySearch=''; const input=document.querySelector('[data-inventory-search]'); if (input) input.value=''; render(); return; }
+      if (edit) return editByType(edit.dataset.edit, edit.dataset.id);
+      if (del) return delByType(del.dataset.del, del.dataset.id);
+      if (adjust) { const item = state.inventory.find(x => x.id === adjust.dataset.id); if (!item) return; item.qty = Math.max(0, n(item.qty) + n(adjust.dataset.adjust)); item.at = new Date().toISOString(); log(`Adjusted inventory: ${item.title} (${adjust.dataset.adjust})`); render(); return; }
+      if (order) { const item = state.inventory.find(x => x.id === order.dataset.order); if (!item) return; item.ordered = !item.ordered; item.at = new Date().toISOString(); log(`${item.ordered ? 'Ordered' : 'Unordered'} inventory: ${item.title}`); render(); }
     });
-
-    document.body.addEventListener('click', (e) => {
-      const edit = e.target.closest('[data-edit]');
-      const del = e.target.closest('[data-del]');
-      const adjust = e.target.closest('[data-adjust]');
-      const order = e.target.closest('[data-order]');
-      const showAllBtn = e.target.closest('[data-show-all-treatments]');
-      const searchClear = e.target.closest('[data-clear-inventory-search]');
-      const dataAction = e.target.closest('#dataActionBtn');
-      const jump = e.target.closest('[data-jump-inventory]');
-      const shortcut = e.target.closest('[data-shortcut]');
-
-      if (shortcut) {
-        const item = state.treatmentShortcuts.find(x => x.id === shortcut.dataset.shortcut);
-        if (item) alert(`${item.title}\n\n${item.detail || 'No details yet.'}`);
-        return;
-      }
-      if (jump) { state.tab = 'inventory'; state.inventorySearch = jump.textContent; save(); render(); setTimeout(() => { const input = document.querySelector('[data-inventory-search]'); if (input) input.focus(); }, 50); return; }
-      if (showAllBtn) { state.showAllTreatments = !state.showAllTreatments; log(state.showAllTreatments ? 'Show all treatments enabled' : 'Show all treatments disabled'); render(); return; }
-      if (searchClear) { state.inventorySearch = ''; const input = document.querySelector('[data-inventory-search]'); if (input) input.value = ''; render(); return; }
-      if (dataAction) {
-        const choice = prompt('Type "import" or "export"');
-        if (!choice) return;
-        const action = choice.trim().toLowerCase();
-        if (action === 'export') {
-          const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
-          const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dialysis-agent-companion.json'; a.click(); URL.revokeObjectURL(a.href);
-        } else if (action === 'import') {
-          const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json';
-          input.onchange = async () => {
-            const file = input.files[0]; if (!file) return;
-            try {
-              const data = JSON.parse(await file.text());
-              if (!data || typeof data !== 'object') throw new Error('Invalid file');
-              const imported = normalizeImportedData(data);
-              state.tab = imported.tab; state.treatments = imported.treatments; state.inventory = imported.inventory; state.notes = imported.notes; state.history = imported.history; state.inventorySearch = ''; state.showAllTreatments = false; log('Imported data'); render();
-            } catch { alert('Could not import file'); }
-          };
-          input.click();
-        }
-        return;
-      }
-      if (edit) { editByType(edit.dataset.edit, edit.dataset.id); return; }
-      if (del) { deleteByType(del.dataset.del, del.dataset.id); return; }
-      if (adjust) {
-        const item = state.inventory.find(x => x.id === adjust.dataset.id); if (!item) return;
-        item.qty = Math.max(0, n(item.qty) + n(adjust.dataset.adjust)); item.at = new Date().toISOString(); log(`Adjusted inventory: ${item.title} (${adjust.dataset.adjust})`); render(); return;
-      }
-      if (order) {
-        const item = state.inventory.find(x => x.id === order.dataset.order); if (!item) return;
-        item.ordered = !item.ordered; item.at = new Date().toISOString(); log(`${item.ordered ? 'Ordered' : 'Unordered'} inventory: ${item.title}`); render();
-      }
-    });
-
-    document.addEventListener('input', (e) => {
-      if (e.target.matches('[data-inventory-search]')) { state.inventorySearch = e.target.value; save(); renderLists(); }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => { if (!state.tab) state.tab = 'home'; render(); });
+    document.addEventListener('input', e => { if (e.target.matches('[data-inventory-search]')) { state.inventorySearch = e.target.value; saveState(); renderLists(); } });
     render();
   </script>
 </body>
