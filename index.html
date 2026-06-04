@@ -235,6 +235,20 @@
           chips.appendChild(b);
         });
       }
+      function activateView() {
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.remove('active');
+  });
+
+  const current = document.getElementById(state.tab + 'View');
+  if (current) {
+    current.classList.add('active');
+  }
+
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === state.tab);
+  });
+}
       const sc = $('treatmentShortcutList');
       sc.innerHTML = '';
       state.treatmentShortcuts.forEach(x => {
