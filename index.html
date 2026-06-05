@@ -3,15 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PD Companion</title>
   <style>
     :root { color-scheme: light; }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #f7f7fb; color: #111827; }
-    header, nav, main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #f7f7fb;
+      color: #111827;
+    }
+    header, nav, main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
     header h1 { margin: 0; font-size: 28px; }
-    nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
     button, .linkbtn { font: inherit; }
     .tab, .btn, .linkbtn {
       border: 1px solid rgba(17,24,39,.14);
@@ -25,7 +38,11 @@
       align-items: center;
       justify-content: center;
     }
-    .tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .tab.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+    }
     .view { display: none; }
     .view.active { display: block; }
     .panel, .card {
@@ -38,24 +55,56 @@
     .grid { display: grid; gap: 12px; }
     .between { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
     .row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .dashboard-grid, .quick-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .dashboard-grid, .quick-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
     .mini-label { font-size: 12px; opacity: .7; }
     .mini-value { font-size: 30px; font-weight: 700; margin-top: 4px; }
     .quick-link-title { font-size: 15px; font-weight: 700; }
     .quick-link-desc { font-size: 13px; opacity: .72; margin-top: 4px; }
-    .item { border: 1px solid rgba(17,24,39,.10); border-radius: 14px; padding: 14px; background: #fff; }
-    .meta { font-size: 13px; opacity: .7; white-space: pre-wrap; }
+    .item {
+      border: 1px solid rgba(17,24,39,.10);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+    }
+    .meta {
+      font-size: 13px;
+      opacity: .7;
+      white-space: pre-wrap;
+    }
     input[type="text"] {
-      width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid rgba(17,24,39,.14); font-size: 16px;
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(17,24,39,.14);
+      font-size: 16px;
       background: #fff;
     }
     .small { font-size: 12px; opacity: .72; }
-    .tag { display: inline-block; padding: 4px 8px; border-radius: 999px; background: rgba(17,24,39,.08); font-size: 12px; }
-    .danger { background: #fee2e2; color: #991b1b; }
-    .cmdbar { display:flex; gap:8px; margin-top:12px; }
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(17,24,39,.08);
+      font-size: 12px;
+    }
+    .danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .cmdbar {
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+    }
     .cmdbar input { flex:1; }
     @media (max-width: 700px) {
-      .dashboard-grid, .quick-links { grid-template-columns: 1fr; }
+      .dashboard-grid, .quick-links {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -81,6 +130,18 @@
             <button class="btn" id="addInventoryBtn">Add Inventory</button>
             <button class="btn" id="addNoteBtn">Add Note</button>
           </div>
+        </div>
+
+        <div class="panel" style="margin-top: 12px;">
+          <div class="quick-link-title">Quick inventory command</div>
+          <div class="quick-link-desc">
+            Type things like: take 3 minicaps, add 10 dialysate 2.5 6L, +10 saline, -2 gauze.
+          </div>
+          <div class="cmdbar">
+            <input type="text" id="homeInventoryCommand" placeholder="add 10 dialysate 2.5 6L" />
+            <button class="btn" id="runHomeInventoryCommandBtn">Run</button>
+          </div>
+          <div class="small" id="homeCommandHelpText" style="margin-top:8px;"></div>
         </div>
 
         <div class="dashboard-grid" style="margin-top: 12px;">
@@ -115,17 +176,19 @@
         </div>
 
         <div style="margin: 12px 0;">
-          <input type="text" id="inventorySearch" placeholder="Search inventory">
+          <input type="text" id="inventorySearch" placeholder="Search inventory" />
         </div>
 
         <div class="panel" style="margin-bottom: 12px;">
           <div class="quick-link-title">Quick inventory command</div>
-          <div class="quick-link-desc">Type things like: take 3 minicaps, add 10 dialysate 2.5 6L, +10 saline, -2 gauze.</div>
+          <div class="quick-link-desc">
+            Type things like: take 3 minicaps, add 10 dialysate 2.5 6L, +10 saline, -2 gauze.
+          </div>
           <div class="cmdbar">
-            <input type="text" id="inventoryCommand" placeholder="add 10 dialysate 2.5 6L">
+            <input type="text" id="inventoryCommand" placeholder="add 10 dialysate 2.5 6L" />
             <button class="btn" id="runInventoryCommandBtn">Run</button>
           </div>
-          <div class="small" id="commandHelpText" style="margin-top:8px;"></div>
+          <div class="small" id="inventoryCommandHelpText" style="margin-top:8px;"></div>
         </div>
 
         <div id="inventoryList" class="grid"></div>
@@ -144,7 +207,7 @@
   </main>
 
   <script>
-    const KEY = 'pd-companion-scratch-v2';
+    const KEY = 'pd-companion-scratch-v3';
     const $ = id => document.getElementById(id);
 
     const defaults = {
@@ -225,10 +288,12 @@
     function renderHome() {
       $('inventoryCount').textContent = state.inventory.length;
       $('notesCount').textContent = state.notes.length;
+
       const low = lowStockItems();
       $('lowStockText').textContent = low.length
         ? low.slice(0, 3).map(i => `${i.title} (${n(i.qty)})`).join(' • ')
         : 'No low stock items.';
+
       const recent = state.history.slice(0, 3);
       $('recentActivityText').textContent = recent.length
         ? recent.map(h => h.text).join(' • ')
@@ -436,6 +501,20 @@
       return { ok: true, message: `${delta > 0 ? 'Added' : 'Took'} ${amount} of ${item.title}.` };
     }
 
+    function runHomeCommand() {
+      const input = $('homeInventoryCommand');
+      const result = quickAdjustByName(input.value);
+      $('homeCommandHelpText').textContent = result.message || '';
+      if (result.ok) input.value = '';
+    }
+
+    function runInventoryCommand() {
+      const input = $('inventoryCommand');
+      const result = quickAdjustByName(input.value);
+      $('inventoryCommandHelpText').textContent = result.message || '';
+      if (result.ok) input.value = '';
+    }
+
     function exportState() {
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
@@ -468,7 +547,12 @@
     }
 
     function escapeHtml(s) {
-      return String(s ?? '').replace(/[&<>\\"]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\\\"':'&quot;' }[m]));
+      return String(s ?? '').replace(/[&<>"]/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;'
+      }[m]));
     }
 
     document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', e => {
@@ -496,34 +580,50 @@
       saveState();
       renderInventory();
     });
+
     $('clearInventorySearchBtn').addEventListener('click', () => {
       state.inventorySearch = '';
       saveState();
       render();
     });
 
-    $('runInventoryCommandBtn').addEventListener('click', () => {
-      const input = $('inventoryCommand');
-      const result = quickAdjustByName(input.value);
-      $('commandHelpText').textContent = result.message || '';
-      if (result.ok) input.value = '';
+    $('runHomeInventoryCommandBtn').addEventListener('click', runHomeCommand);
+    $('runInventoryCommandBtn').addEventListener('click', runInventoryCommand);
+
+    $('homeInventoryCommand').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        runHomeCommand();
+      }
     });
 
     $('inventoryCommand').addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        $('runInventoryCommandBtn').click();
+        runInventoryCommand();
       }
     });
 
     document.body.addEventListener('click', e => {
       const edit = e.target.closest('[data-edit]');
       const del = e.target.closest('[data-del]');
-      const adjust = e.target.closest('[data-adjust]');
+      const quick = e.target.closest('[data-quick]');
       const order = e.target.closest('[data-order]');
+
       if (edit) return editByType(edit.dataset.edit, edit.dataset.id);
       if (del) return delByType(del.dataset.del, del.dataset.id);
-      if (adjust) return adjustInventory(adjust.dataset.id, adjust.dataset.adjust);
+
+      if (quick) {
+        const id = quick.dataset.id;
+        const map = {
+          take1: -1,
+          add1: 1,
+          take5: -5,
+          add5: 5
+        };
+        return adjustInventory(id, map[quick.dataset.quick] || 0);
+      }
+
       if (order) {
         const item = state.inventory.find(x => x.id === order.dataset.order);
         if (!item) return;
