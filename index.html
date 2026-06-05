@@ -101,6 +101,42 @@
       margin-top:12px;
     }
     .cmdbar input { flex:1; }
+
+    .dx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .dx-card {
+      background: #fff;
+      border: 1px solid rgba(17,24,39,.10);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .dx-card.alert { border-left: 4px solid #2563eb; background: #eff6ff; }
+    .dx-date { font-size: 15px; font-weight: 700; }
+    .dx-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .dx-badge.complete { background: #dcfce7; color: #166534; }
+    .dx-badge.pending { background: #fef9c3; color: #854d0e; }
+    .dx-badge.skipped { background: #fee2e2; color: #991b1b; }
+    .dx-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 13px; }
+    .dx-stat { display: flex; flex-direction: column; }
+    .dx-stat .lbl { font-size: 11px; opacity: .6; }
+    .dx-stat .val { font-weight: 600; font-size: 14px; }
+    .dx-divider { border: none; border-top: 1px solid rgba(17,24,39,.08); margin: 8px 0; }
+    .dx-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .dx-summary .card { text-align: center; }
+    .dx-loading { text-align: center; padding: 40px; opacity: .5; }
+
     @media (max-width: 700px) {
       .dashboard-grid, .quick-links {
         grid-template-columns: 1fr;
@@ -117,6 +153,7 @@
     <button class="tab active" data-tab="home">Home</button>
     <button class="tab" data-tab="inventory">Inventory</button>
     <button class="tab" data-tab="notes">Notes</button>
+    <button class="tab" data-tab="dialysis">Dialysis</button>
     <button class="tab" id="backupBtn">Backup</button>
     <button class="tab" id="restoreBtn">Restore</button>
   </nav>
@@ -204,6 +241,18 @@
         <div id="notesList" class="grid" style="margin-top: 12px;"></div>
       </div>
     </section>
+
+    <section id="dialysisView" class="view">
+      <div class="panel">
+        <div class="between">
+          <h2>Dialysis Log</h2>
+          <button class="btn" id="dxRefreshBtn">↻ Refresh</button>
+        </div>
+        <div class="dx-summary" id="dxSummary"></div>
+        <div id="dxList"><div class="dx-loading">Loading dialysis data…</div></div>
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -259,11 +308,12 @@
       state.tab = tab;
       saveState();
       render();
+      if (tab === 'dialysis') loadDxData();
     }
 
     function showView(tab) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      const map = { home: 'homeView', inventory: 'inventoryView', notes: 'notesView' };
+      const map = { home: 'homeView', inventory: 'inventoryView', notes: 'notesView', dialysis: 'dialysisView' };
       $(map[tab] || 'homeView').classList.add('active');
       document.querySelectorAll('.tab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     }
@@ -635,6 +685,153 @@
     });
 
     render();
+
+    // ── Dialysis API ──────────────────────────────────────────────
+    const API_BASE = 'https://nova-8f2a8390.base44.app/functions/getDialysisData';
+    const DX_KEY = 'pd-companion-dx-cache';
+
+    let dxRecords = [];
+
+    function isAlert(r) {
+      const sys = parseInt((r.bp_sitting || '').split('/')[0]) || 0;
+      const pulse = r.pulse || 0;
+      const uf = r.total_uf_ml || 0;
+      const lost = parseDwell(r.lost_dwell_time);
+      return (sys > 140 || (sys > 0 && sys < 100)) || pulse > 100 || (uf > 0 && uf < 700) || lost > 5;
+    }
+
+    function parseDwell(s) {
+      if (!s) return 0;
+      const parts = String(s).split(':');
+      if (parts.length === 2) return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      return parseFloat(s) || 0;
+    }
+
+    function formatDwell(s) {
+      if (!s) return '—';
+      return String(s);
+    }
+
+    function dxStatus(r) {
+      if (!r.session_completed && !r.total_uf_ml) return 'pending';
+      if (r.session_completed === false && r.notes && r.notes.toLowerCase().includes('not completed')) return 'skipped';
+      if (r.session_completed) return 'complete';
+      return 'pending';
+    }
+
+    function renderDxSummary() {
+      const completed = dxRecords.filter(r => r.session_completed);
+      const alerts = dxRecords.filter(r => isAlert(r));
+      const avgUF = completed.length
+        ? Math.round(completed.filter(r => r.total_uf_ml).reduce((a, r) => a + r.total_uf_ml, 0) / completed.filter(r => r.total_uf_ml).length)
+        : 0;
+
+      $('dxSummary').innerHTML = `
+        <div class="card">
+          <div class="mini-label">Sessions (last 90d)</div>
+          <div class="mini-value">${completed.length}</div>
+        </div>
+        <div class="card">
+          <div class="mini-label">Avg UF (mL)</div>
+          <div class="mini-value">${avgUF || '—'}</div>
+        </div>
+        <div class="card">
+          <div class="mini-label">Alert days</div>
+          <div class="mini-value" style="color:${alerts.length > 0 ? '#2563eb' : 'inherit'}">${alerts.length}</div>
+        </div>
+      `;
+    }
+
+    function renderDxList() {
+      const list = $('dxList');
+      if (!dxRecords.length) {
+        list.innerHTML = '<div class="dx-loading">No dialysis records found.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      const grid = document.createElement('div');
+      grid.className = 'dx-grid';
+
+      dxRecords.forEach(r => {
+        const alert = isAlert(r);
+        const status = dxStatus(r);
+        const sys = (r.bp_sitting || '—').split('/')[0];
+        const dia = (r.bp_sitting || '—').split('/')[1] || '—';
+        const card = document.createElement('div');
+        card.className = 'dx-card' + (alert ? ' alert' : '');
+
+        const statusBadge = {
+          complete: '<span class="dx-badge complete">✔ Complete</span>',
+          pending:  '<span class="dx-badge pending">⏳ Pending</span>',
+          skipped:  '<span class="dx-badge skipped">✗ Skipped</span>',
+        }[status] || '';
+
+        let preHtml = `
+          <div class="dx-row">
+            <div class="dx-stat"><span class="lbl">Weight</span><span class="val">${r.weight_lbs ? r.weight_lbs + ' lbs' : '—'}</span></div>
+            <div class="dx-stat"><span class="lbl">B/P</span><span class="val">${r.bp_sitting || '—'}</span></div>
+            <div class="dx-stat"><span class="lbl">Pulse</span><span class="val">${r.pulse || '—'}</span></div>
+            <div class="dx-stat"><span class="lbl">Temp</span><span class="val">${r.temp_f ? r.temp_f + '°F' : '—'}</span></div>
+            <div class="dx-stat"><span class="lbl">Dextrose</span><span class="val">${r.dextrose_concentration || '—'}</span></div>
+          </div>`;
+
+        let postHtml = '';
+        if (r.total_uf_ml || r.avg_dwell_time) {
+          postHtml = `
+          <hr class="dx-divider"/>
+          <div class="dx-row">
+            <div class="dx-stat"><span class="lbl">Total UF</span><span class="val">${r.total_uf_ml ? r.total_uf_ml + ' mL' : '—'}</span></div>
+            <div class="dx-stat"><span class="lbl">Init Drain</span><span class="val">${r.initial_drain_ml != null ? r.initial_drain_ml + ' mL' : '—'}</span></div>
+            <div class="dx-stat"><span class="lbl">Avg Dwell</span><span class="val">${formatDwell(r.avg_dwell_time)}</span></div>
+            <div class="dx-stat"><span class="lbl">Lost Dwell</span><span class="val">${formatDwell(r.lost_dwell_time)}</span></div>
+          </div>`;
+        }
+
+        let notesHtml = '';
+        if (r.notes || r.misc_info) {
+          notesHtml = `<div class="meta" style="margin-top:8px;font-size:12px;">${escapeHtml(r.notes || r.misc_info || '')}</div>`;
+        }
+
+        card.innerHTML = `
+          <div class="dx-date">${r.date} ${statusBadge}</div>
+          ${preHtml}${postHtml}${notesHtml}
+        `;
+        grid.appendChild(card);
+      });
+
+      list.appendChild(grid);
+    }
+
+    async function loadDxData() {
+      $('dxList').innerHTML = '<div class="dx-loading">Loading…</div>';
+      try {
+        const res = await fetch(API_BASE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.records)) {
+          dxRecords = data.records;
+          localStorage.setItem(DX_KEY, JSON.stringify(dxRecords));
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (e) {
+        // Fall back to cache
+        const cached = localStorage.getItem(DX_KEY);
+        if (cached) {
+          dxRecords = JSON.parse(cached);
+          $('dxList').innerHTML = '<div class="small" style="margin-bottom:8px;color:#b45309;">⚠ Showing cached data — could not reach server.</div>';
+        } else {
+          $('dxList').innerHTML = `<div class="dx-loading">Could not load data: ${e.message}</div>`;
+          return;
+        }
+      }
+      renderDxSummary();
+      renderDxList();
+    }
+
+    $('dxRefreshBtn').addEventListener('click', loadDxData);
+
   </script>
 </body>
 </html>
+
