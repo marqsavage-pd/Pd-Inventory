@@ -308,7 +308,9 @@
       state.tab = tab;
       saveState();
       render();
+    loadInventory();
       if (tab === 'dialysis') loadDxData();
+      if (tab === 'inventory' || tab === 'home') loadInventory();
     }
 
     function showView(tab) {
@@ -551,16 +553,16 @@
       return { ok: true, message: `${delta > 0 ? 'Added' : 'Took'} ${amount} of ${item.title}.` };
     }
 
-    function runHomeCommand() {
+    async function runHomeCommand() {
       const input = $('homeInventoryCommand');
-      const result = quickAdjustByName(input.value);
+      const result = await cloudQuickAdjust(input.value);
       $('homeCommandHelpText').textContent = result.message || '';
       if (result.ok) input.value = '';
     }
 
-    function runInventoryCommand() {
+    async function runInventoryCommand() {
       const input = $('inventoryCommand');
-      const result = quickAdjustByName(input.value);
+      const result = await cloudQuickAdjust(input.value);
       $('inventoryCommandHelpText').textContent = result.message || '';
       if (result.ok) input.value = '';
     }
@@ -610,7 +612,7 @@
       setTab(btn.dataset.tab);
     }));
 
-    $('addInventoryBtn').addEventListener('click', addInventory);
+    $('addInventoryBtn').addEventListener('click', cloudAddInventory);
     $('addNoteBtn').addEventListener('click', addNote);
     $('addNoteBtn2').addEventListener('click', addNote);
     $('backupBtn').addEventListener('click', exportState);
@@ -660,8 +662,8 @@
       const quick = e.target.closest('[data-quick]');
       const order = e.target.closest('[data-order]');
 
-      if (edit) return editByType(edit.dataset.edit, edit.dataset.id);
-      if (del) return delByType(del.dataset.del, del.dataset.id);
+      if (edit) { if (edit.dataset.edit === 'inventory') return cloudEditInventory(edit.dataset.id); return editByType(edit.dataset.edit, edit.dataset.id); }
+      if (del) { if (del.dataset.del === 'inventory') return cloudDeleteInventory(del.dataset.id); return delByType(del.dataset.del, del.dataset.id); }
 
       if (quick) {
         const id = quick.dataset.id;
@@ -671,13 +673,14 @@
           take5: -5,
           add5: 5
         };
-        return adjustInventory(id, map[quick.dataset.quick] || 0);
+        return cloudAdjustInventory(id, map[quick.dataset.quick] || 0);
       }
 
       if (order) {
         const item = state.inventory.find(x => x.id === order.dataset.order);
         if (!item) return;
-        item.ordered = !item.ordered;
+        return cloudToggleOrdered(order.dataset.order);
+        // legacy: item.ordered = !item.ordered;
         item.at = new Date().toISOString();
         log(`${item.ordered ? 'Ordered' : 'Unordered'} inventory: ${item.title}`);
         render();
@@ -688,6 +691,7 @@
 
     // ── Dialysis API ──────────────────────────────────────────────
     const API_BASE = 'https://nova-8f2a8390.base44.app/functions/getDialysisData';
+    const INV_API = 'https://nova-8f2a8390.base44.app/functions/manageInventory';
     const DX_KEY = 'pd-companion-dx-cache';
 
     let dxRecords = [];
@@ -830,6 +834,115 @@
     }
 
     $('dxRefreshBtn').addEventListener('click', loadDxData);
+
+
+    // ── Cloud Inventory API ───────────────────────────────────────
+    async function invCall(body) {
+      const res = await fetch(INV_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      return res.json();
+    }
+
+    async function loadInventory() {
+      const r = await invCall({ action: 'list' });
+      if (r.ok) {
+        state.inventory = r.items.map(i => ({
+          id: i.id,
+          title: i.title,
+          detail: i.detail || '',
+          qty: i.qty || 0,
+          reorderPoint: i.reorder_point || 0,
+          ordered: i.ordered || false,
+          at: i.updated_date
+        }));
+        saveState();
+        render();
+      }
+    }
+
+    async function cloudAddInventory() {
+      const title = prompt('Item name');
+      if (!title) return;
+      const detail = prompt('Details', '') || '';
+      const qty = n(prompt('Quantity', '0'));
+      const reorderPoint = n(prompt('Reorder point', '0'));
+      const r = await invCall({ action: 'create', data: { title, detail, qty, reorder_point: reorderPoint } });
+      if (r.ok) { log('Added inventory: ' + title); await loadInventory(); }
+    }
+
+    async function cloudEditInventory(id) {
+      const item = state.inventory.find(x => x.id === id);
+      if (!item) return;
+      const title = prompt('Title', item.title || '');
+      if (title === null) return;
+      const detail = prompt('Details', item.detail || '') || '';
+      const qty = n(prompt('Quantity', item.qty ?? 0));
+      const reorderPoint = n(prompt('Reorder point', item.reorderPoint ?? 0));
+      const r = await invCall({ action: 'update', id, data: { title, detail, qty, reorder_point: reorderPoint } });
+      if (r.ok) { log('Edited inventory: ' + title); await loadInventory(); }
+    }
+
+    async function cloudDeleteInventory(id) {
+      const item = state.inventory.find(x => x.id === id);
+      if (!item || !confirm('Delete ' + item.title + '?')) return;
+      const r = await invCall({ action: 'delete', id });
+      if (r.ok) { log('Deleted inventory: ' + item.title); await loadInventory(); }
+    }
+
+    async function cloudAdjustInventory(id, delta) {
+      const item = state.inventory.find(x => x.id === id);
+      if (!item) return;
+      const newQty = Math.max(0, n(item.qty) + n(delta));
+      const r = await invCall({ action: 'update', id, data: { qty: newQty } });
+      if (r.ok) { log((delta > 0 ? 'Added ' : 'Took ') + Math.abs(delta) + ' of ' + item.title); await loadInventory(); }
+    }
+
+    async function cloudToggleOrdered(id) {
+      const item = state.inventory.find(x => x.id === id);
+      if (!item) return;
+      const r = await invCall({ action: 'update', id, data: { ordered: !item.ordered } });
+      if (r.ok) { log((item.ordered ? 'Un-ordered: ' : 'Ordered: ') + item.title); await loadInventory(); }
+    }
+
+    async function cloudQuickAdjust(command) {
+      const raw = String(command || '').trim();
+      if (!raw) return { ok: false, message: 'Type a command like "take 3 minicaps" or "add 10 dialysate 2.5 6L".' };
+      const match = raw.match(/^(add|take|\+|-)\s*(\d+)\s+(.+)$/i);
+      if (!match) return { ok: false, message: 'Use: add 10 item, take 3 item, +10 item, or -3 item.' };
+      const action = match[1].toLowerCase();
+      const amount = parseInt(match[2], 10);
+      const name = match[3].trim().toLowerCase();
+      const delta = (action === 'take' || action === '-') ? -amount : amount;
+
+      let item = state.inventory.find(i => String(i.title || '').trim().toLowerCase() === name);
+      if (!item) {
+        const matches = state.inventory.filter(i =>
+          String(i.title || '').trim().toLowerCase().includes(name) ||
+          name.includes(String(i.title || '').trim().toLowerCase())
+        );
+        if (matches.length === 1) item = matches[0];
+        else if (matches.length > 1) {
+          const pick = prompt('Multiple matches:\n' + matches.map(m => '- ' + m.title).join('\n'));
+          if (!pick) return { ok: false, message: 'Cancelled.' };
+          item = state.inventory.find(i => String(i.title || '').trim().toLowerCase() === pick.trim().toLowerCase());
+        }
+      }
+
+      if (!item) {
+        if (!confirm('"' + match[3].trim() + '" not found. Create it?')) return { ok: false, message: 'Cancelled.' };
+        const r = await invCall({ action: 'create', data: { title: match[3].trim(), qty: Math.max(0, delta), reorder_point: 0 } });
+        if (r.ok) { log('Created inventory: ' + match[3].trim()); await loadInventory(); }
+        return { ok: true, message: 'Created ' + match[3].trim() + '.' };
+      }
+
+      const newQty = Math.max(0, n(item.qty) + delta);
+      const r = await invCall({ action: 'update', id: item.id, data: { qty: newQty } });
+      if (r.ok) { log((delta > 0 ? 'Added ' : 'Took ') + amount + ' of ' + item.title); await loadInventory(); }
+      return { ok: true, message: (delta > 0 ? 'Added ' : 'Took ') + amount + ' of ' + item.title + '.' };
+    }
 
   </script>
 </body>
