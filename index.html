@@ -135,6 +135,30 @@
     .dx-divider { border: none; border-top: 1px solid rgba(17,24,39,.08); margin: 8px 0; }
     .dx-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
     .dx-summary .card { text-align: center; }
+
+    .dx-home-card {
+      background: #fff;
+      border: 1px solid rgba(17,24,39,.10);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .dx-home-card.alert { border-left: 4px solid #2563eb; background: #eff6ff; }
+    .dx-home-title { font-size: 13px; font-weight: 700; opacity: .5; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; }
+    .dx-home-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(17,24,39,.06); }
+    .dx-home-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .dx-home-date { font-size: 14px; font-weight: 700; }
+    .dx-home-meta { font-size: 12px; opacity: .6; margin-top: 2px; }
+    .dx-home-stats { display: flex; gap: 14px; text-align: right; }
+    .dx-home-stat { display: flex; flex-direction: column; }
+    .dx-home-stat .lbl { font-size: 10px; opacity: .5; }
+    .dx-home-stat .val { font-size: 13px; font-weight: 600; }
+    .dx-home-badge { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 600; margin-left: 6px; }
+    .dx-home-badge.complete { background: #dcfce7; color: #166534; }
+    .dx-home-badge.pending { background: #fef9c3; color: #854d0e; }
+    .dx-home-badge.skipped { background: #fee2e2; color: #991b1b; }
+
     .dx-loading { text-align: center; padding: 40px; opacity: .5; }
     .dx-section-header {
       display: flex;
@@ -216,6 +240,8 @@
             <div class="mini-value" id="notesCount">0</div>
           </div>
         </div>
+
+        <div id="homeRecentSessions" style="margin-top:12px;"></div>
 
         <div class="quick-links">
           <div class="card">
@@ -336,6 +362,7 @@
     loadInventory();
       if (tab === 'dialysis') loadDxData();
       if (tab === 'inventory' || tab === 'home') loadInventory();
+      if (tab === 'home') renderHomeRecentSessions();
     }
 
     function showView(tab) {
@@ -362,7 +389,60 @@
       );
     }
 
+
+    async function renderHomeRecentSessions() {
+      const container = $('homeRecentSessions');
+      if (!container) return;
+      container.innerHTML = '<div class="dx-home-card"><div class="dx-home-title">Last 3 Sessions</div><div style="opacity:.5;font-size:13px;">Loading...</div></div>';
+      try {
+        const res = await fetch(API_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'list', limit: 3 })
+        });
+        const data = await res.json();
+        const records = (data.records || []).slice(0, 3);
+        if (!records.length) {
+          container.innerHTML = '<div class="dx-home-card"><div class="dx-home-title">Last 3 Sessions</div><div style="opacity:.5;font-size:13px;">No sessions logged yet.</div></div>';
+          return;
+        }
+        const wrap = document.createElement('div');
+        wrap.className = 'dx-home-card' + (records.some(r => isAlert(r)) ? ' alert' : '');
+        wrap.innerHTML = '<div class="dx-home-title">📋 Last 3 Sessions</div>';
+        records.forEach(r => {
+          const alert = isAlert(r);
+          const status = dxStatus(r);
+          const dateObj = new Date(r.date + 'T12:00:00');
+          const dayLabel = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+          const badgeClass = status === 'complete' ? 'complete' : status === 'pending' ? 'pending' : 'skipped';
+          const badgeText = status === 'complete' ? '✔ Done' : status === 'pending' ? '⏳ Pending' : '✗ Skipped';
+          const row = document.createElement('div');
+          row.className = 'dx-home-row';
+          row.innerHTML = `
+            <div>
+              <div class="dx-home-date">
+                ${dayLabel}
+                <span class="dx-home-badge ${badgeClass}">${badgeText}</span>
+                ${alert ? '<span style="color:#2563eb;font-size:11px;margin-left:4px;">⚠ Alert</span>' : ''}
+              </div>
+              <div class="dx-home-meta">${r.dextrose_concentration || '—'} · ${r.weight_lbs ? r.weight_lbs + ' lbs' : '—'} · BP ${r.bp_sitting || '—'}</div>
+            </div>
+            <div class="dx-home-stats">
+              <div class="dx-home-stat"><span class="lbl">UF</span><span class="val">${r.total_uf_ml ? r.total_uf_ml + ' mL' : '—'}</span></div>
+              <div class="dx-home-stat"><span class="lbl">Dwell</span><span class="val">${formatDwell(r.avg_dwell_time)}</span></div>
+            </div>
+          `;
+          wrap.appendChild(row);
+        });
+        container.innerHTML = '';
+        container.appendChild(wrap);
+      } catch(e) {
+        container.innerHTML = '<div class="dx-home-card"><div class="dx-home-title">Last 3 Sessions</div><div style="opacity:.5;font-size:13px;">Could not load sessions.</div></div>';
+      }
+    }
+
     function renderHome() {
+      renderHomeRecentSessions();
       $('inventoryCount').textContent = state.inventory.length;
       $('notesCount').textContent = state.notes.length;
 
