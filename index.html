@@ -1186,15 +1186,22 @@
     }
 
     function autoSupplyList(nights) {
+      const buffer = 2; // 2 extra nights buffer
+      const n = nights + buffer;
       return [
-        { item_name: 'Dialysate 2.5% 6L Bags', quantity_needed: nights * 6 },
-        { item_name: 'Mini Caps', quantity_needed: nights * 2 + 4 },
-        { item_name: '4x4 Woven Sponges', quantity_needed: nights * 2 + 4 },
-        { item_name: '2x2 Woven Sponges', quantity_needed: nights * 2 + 4 },
+        { item_name: 'Dialysate 2.5% 6L Bags', quantity_needed: n * 2 },
+        { item_name: 'APD Cassettes', quantity_needed: n * 1 },
+        { item_name: 'Drainage Bags', quantity_needed: n * 1 },
+        { item_name: 'Mini Caps', quantity_needed: n * 2 },
+        { item_name: 'Face Masks', quantity_needed: n * 2 },
+        { item_name: 'Gloves', quantity_needed: n * 3 },
+        { item_name: '4x4 Woven Sponges', quantity_needed: n * 3 },
+        { item_name: '2x2 Woven Sponges', quantity_needed: n * 3 },
         { item_name: 'Island Dressings', quantity_needed: nights + 2 },
-        { item_name: 'Betadine Solution', quantity_needed: 1 },
-        { item_name: 'Face Masks', quantity_needed: nights * 2 + 4 },
-        { item_name: 'Sterile Gloves', quantity_needed: nights * 2 + 4 },
+        { item_name: 'Alcavis', quantity_needed: 1 },
+        { item_name: 'ExSept', quantity_needed: 1 },
+        { item_name: 'Surgical Tape', quantity_needed: 1 },
+        { item_name: 'Paper Towels', quantity_needed: 1 },
       ];
     }
 
